@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<report>
+    <Cipher>cipher</Cipher>
+    <BSW>Лира 9.0</BSW>
+    <MePE>2</MePE>
+    <Type>
+        <ID PE="1">
+            <N CommNode="1">
+                <X></X>
+                <Y></Y>
+                <Z></Z>
+            </N>
+            <N CommNode="2">
+                <X></X>
+                <Y></Y>
+                <Z></Z>
+            </N>
+        </ID>
+        <ID PE="3">
+            <N CommNode="1">
+                <X></X>
+                <Y></Y>
+                <Z></Z>
+            </N>
+        </ID>
+    </Type>
+</report>

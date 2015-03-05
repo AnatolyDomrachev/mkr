@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Project>
+    <ObjectName>Объект тест 1</ObjectName>
+    <ID_GIP>1</ID_GIP>
+    <Cipher>Шифр тест 1</Cipher>
+    <CreationTime>13/04/2014 13:04</CreationTime>
+    <NumberProjElements>2</NumberProjElements>
+    <ListPE>
+        <ID PE="1">
+            <ID_Designer>2</ID_Designer>
+            <KX>1</KX>
+            <KY>2</KY>
+            <KZ>3</KZ>
+            <DX>1</DX>
+            <DY>2</DY>
+            <DZ>3</DZ>
+            <File>/var/www/diplomtest/data/files/ed4fc5980bd8b1ad869ff725c7776338.sys</File>
+            <Description>Примечание1</Description>
+        </ID>
+        <ID PE="2">
+            <ID_Designer>3</ID_Designer>
+            <KX>3</KX>
+            <KY>2</KY>
+            <KZ>1</KZ>
+            <DX>3</DX>
+            <DY>2</DY>
+            <DZ>1</DZ>
+            <File>/var/www/diplomtest/data/files/f6faf040efa71a094a8f9f471576c6e7</File>
+            <Description>Примечание2</Description>
+        </ID>
+    </ListPE>
+    <CombinationPE>
+        <ID PE="1">
+            <PE PE="1-2">
+                <S>1</S>
+                <P>0</P>
+                <O>0</O>
+            </PE>
+        </ID>
+    </CombinationPE>
+</Project>

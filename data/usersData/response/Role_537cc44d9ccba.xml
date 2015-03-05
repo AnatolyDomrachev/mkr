@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Rule>
+  <FIO_Designer>test2</FIO_Designer>
+  <ID_Designer>2</ID_Designer>
+  <UserRule>Designer</UserRule>
+  <CipherList>
+    <Cipher>cipher</Cipher>
+  </CipherList>
+</Rule>

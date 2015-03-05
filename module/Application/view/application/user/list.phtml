@@ -1,0 +1,73 @@
+<?php
+/** @var $users \Application\Entity\User[] */
+$users = $this->users;
+?>
+
+
+<form method="post" enctype="multipart/form-data" action=saveUsers>
+
+        Список пользователей
+        <br><br><button class="btn btn-default" type = "submit">Сохранить изменения</button><br><br>
+        
+            <table class="table table-bordered table-hover">
+                <tr>
+                    <th>ID</th>
+                    <th>Фамилия</th>
+                    <th>IP</th>
+                    <th>MAC</th>
+                    <th>Роль</th>
+                    <th>Логин</th>
+                    <th>Описание</th>
+                    <th></th>
+					<th>Удалить</th>
+                </tr>
+                <?php foreach($users as $user): ?>
+				<div class="remove<?php echo $user->getId(); ?>">
+                    <tr>
+                        <td><?php echo $user->getId(); ?></td>
+                        <td><input type="text" name="users[<?php echo $user->getId(); ?>][FIO]" value="<?php echo $user->getFio(); ?>" class="form-control"/></td>
+                        <td><input type="text" name="users[<?php echo $user->getId(); ?>][IP_Designer]" value="<?php echo $user->getIp(); ?>" class="form-control"/></td>
+                        <td><input type="text" name="users[<?php echo $user->getId(); ?>][MAC]" value="<?php echo $user->getMac(); ?>" class="form-control"/></td>
+                        <td>
+                            <select name="users[<?php echo $user->getId(); ?>][Role]" class="form-control">
+                                <?php foreach($user::roles() as $role): ?>
+                                    <option
+                                        <?php echo ($role == $user->getRole()) ? 'selected' : '' ?>
+                                        value="<?php echo $role ?>">
+                                        <?php echo $user::roleTitle($role); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </td>
+                        <td><input type="text" name="users[<?php echo $user->getId(); ?>][Login]" value="<?php echo $user->getLogin(); ?>" class="form-control"/></td>
+                        <td><input type="text" name="users[<?php echo $user->getId(); ?>][Description]" value="<?php echo $user->getDescription(); ?>" class="form-control"/></td>
+                        <td>
+						
+						<div class="pass<?php echo $user->getId(); ?>">
+							<input type="hidden" name="users[<?php echo $user->getId(); ?>][Password]" value="<?php echo $user->getPassword(); ?>">
+						</div>
+						
+                            <button type="button" onclick="newPasswd(<?php echo $user->getId(); ?>)";>Новый пароль</button>
+						</td><td align="center" valign="middle">
+                            <input type="checkbox" name = "users[<?php echo $user->getId(); ?>][remove]" >
+							
+                        </td>
+                    </tr>
+				</div>
+				<?php $lastId= $user->getId(); ?>
+                <?php endforeach; ?>
+				
+            </table>
+        <button class="btn btn-default" type = "submit">Сохранить изменения</button>
+
+</form>
+
+<script>
+function newPasswd(id){
+	//if(password[id] == undefine){
+		
+	var password = prompt('Новый пароль',0);
+	//alert('id= ' + id + ' пароль='+password);
+	$('div.pass' + id).html('<input type="hidden" name=users['+id+'][newPassword] value="'+password+'">');
+	}
+</script>

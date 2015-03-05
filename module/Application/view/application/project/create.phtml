@@ -1,0 +1,250 @@
+<?php
+/** @var $user \Application\Entity\User */
+$user = $this->user;
+/** @var $designers \Application\Entity\User[] */
+$designers = $this->designers;
+$createProject=$this->createProject;
+if(!empty($createProject)){
+		echo "	<head>
+		<meta http-equiv=\"Refresh\" content=\"0;url=http://$_SERVER[HTTP_HOST]/application\">
+		</head>";
+		
+echo '<script language="JavaScript">
+					<!--
+					alert("Проект успешно создан");
+					-->
+	</script>';
+	die();
+}
+?>
+
+<style type="text/css">
+    table * {
+        text-align: center;
+    }
+    table tbody td{
+        padding: 2px !important;
+    }
+    table tbody td input.small {
+        width: 35px;
+        padding: 0;
+        margin: 0 auto;
+    }
+</style>
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Таблица</h3>
+            </div>
+            <div class="panel-body">
+                <form class="form-inline" role="form" method="post" enctype="multipart/form-data">
+                    <div class="col-md-12">
+                        <div class="col-sm-1">Объект:</div>
+                        <div class="form-group col-sm-2">
+                            <input type="text" name="object" class="form-control" value="">
+                        </div>
+                        <div class="col-sm-1">Шифр:</div>
+                        <div class="form-group col-sm-2">
+                            <input type="text" name="cipher" class="form-control" value="">
+                        </div>
+                    </div>
+                    <br>
+                    <br>
+                    <div class="col-md-12">
+                        <div class="col-sm-1">Кол-во ПЕ:</div>
+                        <div class="form-group col-sm-2">
+                            <input type="text" name="pe_count" class="form-control">
+                        </div>
+                    </div>
+                    <br>
+                    <br>
+                    <table class="table table-bordered table-hover pe">
+                        <thead>
+                        <tr class="pe_numbers">
+                            <th class="id" rowspan="2"></th>
+                            <th colspan="3" class="peBorder">Координаты, м</th>
+                            <th colspan="3">Размеры, м</th>
+                            <th class="designer" colspan="4"></th>
+                        </tr>
+                        <tr class="spo_elements">
+                            <th class="peBorder">x</th>
+                            <th>y</th>
+                            <th>z</th>
+
+                            <th>x</th>
+                            <th>y</th>
+                            <th>z</th>
+                            <th class="designer">Проектировщик</th>
+<!--                            <th>Файл модели ПЕ</th>-->
+                            <th>Файл-уточнение</th>
+                            <th>Примечание</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <!-- PE insert -->
+                        </tbody>
+                    </table>
+
+                    <button type="submit" class="btn btn-default">Сохранить</button>
+                    <a class="btn btn-default" onclick="clearForm()">Очистить форму</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="templates" style="display: none">
+    <table>
+        <tbody>
+        <tr class="pe_template">
+            <td class="id"><input type="hidden"/></td>
+
+            <td class="peBorder">
+                <input class="form-control small exchangePeNumber" type="text" name="pe[peNumber][coordinates][x]"/>
+            </td>
+            <td>
+                <input class="form-control small exchangePeNumber" type="text" name="pe[peNumber][coordinates][y]"/>
+            </td>
+            <td>
+                <input class="form-control small exchangePeNumber" type="text" name="pe[peNumber][coordinates][z]"/>
+            </td>
+
+            <td>
+                <input class="form-control small exchangePeNumber" type="text" name="pe[peNumber][size][x]"/>
+            </td>
+            <td>
+                <input class="form-control small exchangePeNumber" type="text" name="pe[peNumber][size][y]"/>
+            </td>
+            <td>
+                <input class="form-control small exchangePeNumber" type="text" name="pe[peNumber][size][z]"/>
+            </td>
+
+            <td class="designer">
+                <select class="form-control">
+                    <?php foreach($designers as $designer): ?>
+                        <option value="<?php echo $designer->getId(); ?>"><?php echo $designer->getFio(); ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </td>
+<!--            <td>-->
+<!--                <input type="file" title="CI" data-filename-placement="inside" class="btn-danger exchangePeNumber" name="pe[peNumber][fileModel]" />-->
+<!--            </td>-->
+            <td>
+                <input type="file" title="CI" class="exchangePeNumber" name="pe[peNumber][fileClarification]" />
+            </td>
+            <td>
+                <input type="text" class="form-control exchangePeNumber" name="pe[peNumber][description]" />
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script type="text/javascript">
+    var peLastId,
+        defaultPeCount = 2;
+
+    $(function() {
+
+        initForm();
+
+        $("input[name=pe_count]").change(function() {
+            var count_pe = parseInt($(this).val()),
+                current_count_pe = $("table.pe tbody tr").length;
+
+            if(count_pe > 1 && current_count_pe < count_pe) {
+                var needle_pe = count_pe - current_count_pe;
+
+                for(var i = 1; i <= needle_pe; i++) {
+                    addPe();
+                }
+                renderPe();
+            } else {
+                $(this).val(current_count_pe);
+            }
+        });
+    });
+
+    function clearForm()
+    {
+        $("table.pe tbody tr").remove();
+        $("table.pe thead tr.pe_numbers .pe_number").remove();
+        $("table.pe thead tr.spo_elements .spo_element").remove();
+
+        initForm();
+    }
+
+    function initForm()
+    {
+        peLastId = 0;
+        $("input[name=pe_count]").val(defaultPeCount);
+        addPe();
+        addPe();
+        renderPe();
+    }
+
+    function addPe()
+    {
+        peLastId++;
+        var pe = $("div.templates tr.pe_template").clone();
+        pe.children("td.id").append(peLastId);
+        pe.children("td.id").children("input").attr("name", "pe[" + peLastId + "][number]").val(peLastId);
+        pe.children("td.designer").children("select").attr("name", "pe[" + peLastId + "][designer]");
+
+        pe.find("input.exchangePeNumber").attr("name", function() {
+            return $(this).attr("name").replace("peNumber", peLastId);
+        });
+
+        $("table.pe tbody").append(pe);
+    }
+
+    function renderPe()
+    {
+        // Render th number pr
+        var th_count = $("table.pe tr.pe_numbers th.pe_number").length,
+            needle_th_count = peLastId - th_count;
+
+        for(var i = 1; i < needle_th_count; i++) {
+            $("table.pe tr.pe_numbers th.peBorder").before("<th class='pe_number' colspan='3'>" + (i + th_count + 1) + "</th>");
+        }
+
+        // Render th спо elements
+        var spo_count = ($("table.pe tr.spo_elements th.spo_element").length/ 3),
+            needle_spo_count = peLastId - spo_count;
+
+        for(var i = 1; i < needle_spo_count; i++) {
+            $("table.pe tr.spo_elements th.peBorder")
+                .before("<th class='spo_element'>с</th>")
+                .before("<th class='spo_element'>п</th>")
+                .before("<th class='spo_element'>о</th>")
+            ;
+        }
+
+        // Render inputs
+        $.each($("table.pe tbody tr"), function(index, pe) {
+            var input_count = ($(pe).find("td.spo_input").length / 3),
+                needle_input_count = peLastId - input_count,
+                pe_number = $(pe).find("td.id input").val();
+
+            var td_input = $("<td>").addClass("spo_input"),
+                input = $("<input>").attr("type", "text").addClass("form-control small");
+            for(var i = 1; i < needle_input_count; i++) {
+                var pe_link = i + input_count + 1,
+                    isDisabled = pe_link <= pe_number,
+                    _input = input.clone();
+
+                if(isDisabled) {
+                    _input.attr("disabled", "disabled");
+                }
+
+                $(pe).children("td.peBorder")
+                    .before(td_input.clone().html(_input.clone().attr("name", "pe["+pe_number+"][link]["+pe_link+"][s]")))
+                    .before(td_input.clone().html(_input.clone().attr("name", "pe["+pe_number+"][link]["+pe_link+"][p]").attr("disabled", "disabled")))
+                    .before(td_input.clone().html(_input.clone().attr("name", "pe["+pe_number+"][link]["+pe_link+"][o]").attr("disabled", "disabled")))
+                ;
+            }
+        });
+    }
+
+</script>

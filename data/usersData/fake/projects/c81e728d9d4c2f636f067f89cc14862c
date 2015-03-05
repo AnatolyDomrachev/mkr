@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Project>
+    <ObjectName>2</ObjectName>
+    <ID_GIP>1</ID_GIP>
+    <Cipher>2</Cipher>
+    <CreationTime>01/05/2014 15:05</CreationTime>
+    <NumberProjElements>2</NumberProjElements>
+    <ListPE>
+        <ID PE="1">
+            <ID_Designer>2</ID_Designer>
+            <KX>4</KX>
+            <KY>5</KY>
+            <KZ>6</KZ>
+            <DX>7</DX>
+            <DY>8</DY>
+            <DZ>9</DZ>
+            <File/>
+            <Description>ewr</Description>
+        </ID>
+        <ID PE="2">
+            <ID_Designer>3</ID_Designer>
+            <KX>1</KX>
+            <KY>2</KY>
+            <KZ>3</KZ>
+            <DX>4</DX>
+            <DY>5</DY>
+            <DZ>6</DZ>
+            <File/>
+            <Description>werwerwer</Description>
+        </ID>
+    </ListPE>
+    <CombinationPE>
+        <ID PE="1">
+            <PE PE="1-2">
+                <S>1</S>
+                <P>2</P>
+                <O>3</O>
+            </PE>
+        </ID>
+    </CombinationPE>
+</Project>

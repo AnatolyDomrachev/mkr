@@ -1,0 +1,197 @@
+<?php
+$peStageNumber=$this->peStageNumber;
+$peStages=$this->stages;
+$cipher=$this->cipher;
+$user = $this->user;
+$project = $this->project;
+$designers = $this->designers;
+$userPeNumber=$this->pe_number;
+
+/* echo "<pre>";
+print_r($project);
+print_r($user); */
+
+
+$uid=$user->getId();
+foreach($project->getListPe() as $pe){
+$peid=$pe->getDesignerId();
+if($uid==$peid){
+	$listPe[]=$pe->getNumber();
+	}
+}
+
+/* print_r($listPe);
+die(); */
+
+//echo $userPeNumber;die();
+/* echo "	<head>
+		<meta http-equiv=\"Refresh\" content=\"6;url=$url\">
+		</head>"; */
+?>
+
+<script>
+function test()
+{
+alert($("#peNumber").val());
+}
+</script>
+
+<button onclick="test();">Тест</button>
+
+<style type="text/css">
+    .panel-body a.btn-default {
+        width: 330px;
+        margin-top: 5px;
+	    }
+	.square-red {
+	background-color:red;
+	}
+	.square-blue {
+	background-color:blue;
+	}
+</style>
+<b>
+<a href="/">Начальная страница</a>&nbsp &nbsp - &nbsp &nbsp <a href="/application/project/pe-stages?cipher=<?php echo "$cipher"; ?>">
+Работа с проектом</a>
+</b><p>
+<table   cellpadding=4 ><tr><td valign="top">
+<table>
+<tr><td><b>Номер ПЕ: <select id="peNumber"> 
+	<?php foreach($listPe as $pe):?>
+		<option value= <?php echo $pe;?> > <?php echo $pe;?> </option>
+	<?php endforeach; ?>
+<tr><td>Проектировщик:<?php echo $user->getFio(); ?>
+<tr><td>Объект:<?php echo $project->getName(); ?>
+<tr><td>Шифр:<?php echo $project->getCipher(); ?>
+<tr><td>Кол-во ПЕ:<?php echo $project->getNumberProjElements(); ?>
+<tr><td>
+<a href="/application/project/show-model?cipher=<?php echo "$cipher"; ?>" class="btn btn-default">Показать модель</a>
+</table>
+<td>
+<?php		
+$peStageNumber++;		
+echo "<table border=1>
+		<tr bgcolor = PaleGoldenrod><td ><b>Стадия выполнения<td><b>Статус";
+foreach($peStages as $peStage){
+	if($peStage[number]<$peStageNumber){
+		$color="PaleGreen";
+		$text="Готово";
+		}
+	elseif($peStage[number]==$peStageNumber){
+		$color="LightYellow";
+		$text="Выполняется";
+		}
+	else{
+		$color="Salmon";
+		$text="";
+	}
+	if($peStage[number]==1 && $peStageNumber==1){
+		$peStage[title]="<a href=\"/application/project/work?cipher=$cipher\" class=\"btn btn-default\">$peStage[title]</a>";
+	}
+	if($peStage[number]==2 && $peStageNumber==2){
+		$peStage[title]="<a href=\"/application/project/commonNodes?cipher=$cipher&peNumber=$userPeNumber\" class=\"btn btn-default\">$peStage[title]</a>";
+	}
+	echo "<tr><td> $peStage[title] <td bgcolor = $color> $text";
+	}
+echo "</table>";
+?>
+</table>
+<p>
+<p>
+        <script type="text/javascript">
+            /**
+            * Функция Скрывает/Показывает блок 
+            * @author ox2.ru дизайн студия
+            **/
+            function showHide(element_id) {
+                //Если элемент с id-шником element_id существует
+                if (document.getElementById(element_id)) { 
+                    //Записываем ссылку на элемент в переменную obj
+                    var obj = document.getElementById(element_id); 
+                    //Если css-свойство display не block, то: 
+                    if (obj.style.display != "block") { 
+                        obj.style.display = "block"; //Показываем элемент
+                    }
+                    else obj.style.display = "none"; //Скрываем элемент
+                }
+                //Если элемент с id-шником element_id не найден, то выводим сообщение
+                else alert("Элемент с id: " + element_id + " не найден!"); 
+            }   
+        </script>
+ 
+<!-- При клике запускаем функцию showHide, и передаем параметр 
+        id-шник элемента который нужно показать/скрыть 
+        <a href="javascript:void(0)" onclick="showHide('block_id')"></a><br/><br/>
+        <div id="block_id" style="display: none;">
+
+        </div>
+		-->
+<b>Связи между проектными единицами</b>		
+ <table class="table table-bordered table-hover pe">
+                        <thead><b>
+                        <tr class="pe_numbers">
+                            <td class="id" rowspan="2"><b>ПЕ</b></td>
+                            <?php foreach($project->getListPe() as $pe): ?>
+                                <?php if($pe->getNumber() != 1): ?>
+                                    <td><b><?php echo $pe->getNumber(); ?></td>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                            <td colspan="3" align="center" > <b>Координаты, м</td>
+                            <td colspan="3" align="center" ><b>Размеры, м</td>
+                            <td class="designer" colspan="4" rowspan="2" valign="middle" align="center"><b>Проектировщик</td>
+                        </tr>
+                        <tr class="spo_elements">
+                            <?php foreach($project->getListPe() as $pe): ?>
+                                <?php if($pe->getNumber() != 1): ?>
+                                    <td><b>с</td>
+                                    <!-- <td>п</td>
+                                    <td>о</td> -->
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+
+                            <td align="center"><b>x</td>
+                            <td align="center"><b>y</td>
+                            <td align="center"><b>z</td>
+
+                            <td align="center"><b>x</td>
+                            <td align="center"><b>y</td>
+                            <td align="center"><b>z</td>
+							
+                            
+                            
+                            
+                        </tr>
+                        </b></thead>
+                        <tbody>
+                        <?php foreach($project->getListPe() as $pe): ?>
+                            <tr class="<?php echo ($pe->getNumber() == $userPeNumber) ? 'success' : ''; ?>">
+                                <td><?php echo $pe->getNumber(); ?></td>
+
+                                <?php foreach($project->getListPe() as $_pe): ?>
+                                    <?php if($_pe->getNumber() != 1): ?>
+                                        <td><?php echo $pe->getSCombination($_pe->getNumber()); ?></td>
+                                     <!--   <td><?php echo $pe->getPCombination($_pe->getNumber()); ?></td>
+                                        <td><?php echo $pe->getOCombination($_pe->getNumber()); ?></td> -->
+                                    <?php endif; ?>
+                                <?php endforeach; ?>
+
+                                <td><?php echo $pe->getKx(); ?></td>
+                                <td><?php echo $pe->getKy(); ?></td>
+                                <td><?php echo $pe->getKz(); ?></td>
+
+                                <td><?php echo $pe->getDx(); ?></td>
+                                <td><?php echo $pe->getDy(); ?></td>
+                                <td><?php echo $pe->getDz(); ?></td>
+
+                                <td><?php echo $designers[$pe->getDesignerId()]->getFio(); ?></td>
+                                
+                                
+                            </tr>
+                        <?php endforeach; ?>
+                        </tbody>
+                    </table>
+    </body>
+</html>
+
+
+

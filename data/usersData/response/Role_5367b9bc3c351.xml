@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Rule>
+  <FIO_Designer>test1</FIO_Designer>
+  <ID_Designer>1</ID_Designer>
+  <UserRule>GIP</UserRule>
+  <CipherList>
+    <Cipher>test</Cipher><Cipher>cipher</Cipher><Cipher>121212</Cipher><Cipher>cipher1</Cipher><Cipher>qweqwe</Cipher>
+  </CipherList>
+</Rule>

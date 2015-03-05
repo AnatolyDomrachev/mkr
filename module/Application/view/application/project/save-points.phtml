@@ -1,0 +1,43 @@
+<?php
+//$result=$this->result;
+$cipher=$this->cipher;
+$peNumber=$this->userPeNumber;
+//$result="success";
+//if($result=="error")
+/* 	echo '
+					<script language="JavaScript">
+					<!--
+					alert("Ошибка передачи файла");
+					//-->
+					</script>
+
+		<input type="button" onclick="location.reload();" value="Отправить файл ещё раз"/>
+		<input type="button" onclick="history.back();" value="Вернуться к выбору файла"/>	
+		'; */
+//if($result=="success"){
+	
+	echo "	<head>
+		<meta http-equiv=\"Refresh\" content=\"1;url=http://$_SERVER[HTTP_HOST]/application/project/peStages?cipher=$cipher&peNumber=$peNumber\">
+		</head>";
+
+	echo '			<script language="JavaScript">
+					alert("Данные переданы на сервер");
+					</script>';
+//}
+/* echo "<pre>";
+print_r($_SERVER[HTTP_HOST]); */
+/* if($peStage == 4)
+{
+	echo "Данные согласованы. Выполняется расчёт.";
+}
+
+if($peStage == 5)
+{
+	echo "Данные согласованы. Выполняется расчёт.";
+}
+
+if($peStage <= 3);
+{
+echo "Данные не согласованы"; 
+}*/
+?>

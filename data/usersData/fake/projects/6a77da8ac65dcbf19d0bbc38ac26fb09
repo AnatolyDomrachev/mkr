@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Project>
+    <ObjectName>Рама</ObjectName>
+    <ID_GIP>1</ID_GIP>
+    <Cipher>00437</Cipher>
+    <CreationTime>05/06/2014 21:06</CreationTime>
+    <NumberProjElements>4</NumberProjElements>
+    <ListPE>
+        <ID PE="1">
+            <ID_Designer>2</ID_Designer>
+            <KX>5</KX>
+            <KY>4</KY>
+            <KZ>5</KZ>
+            <DX>6</DX>
+            <DY>7</DY>
+            <DZ>8</DZ>
+            <File/>
+            <Description>Примечание</Description>
+        </ID>
+        <ID PE="2">
+            <ID_Designer>3</ID_Designer>
+            <KX>6</KX>
+            <KY>5</KY>
+            <KZ>4</KZ>
+            <DX>4</DX>
+            <DY>5</DY>
+            <DZ>6</DZ>
+            <File/>
+            <Description></Description>
+        </ID>
+        <ID PE="3">
+            <ID_Designer>4</ID_Designer>
+            <KX>7</KX>
+            <KY>2</KY>
+            <KZ>4</KZ>
+            <DX>5</DX>
+            <DY>6</DY>
+            <DZ>7</DZ>
+            <File/>
+            <Description></Description>
+        </ID>
+        <ID PE="4">
+            <ID_Designer>5</ID_Designer>
+            <KX>5</KX>
+            <KY>4</KY>
+            <KZ>2</KZ>
+            <DX>3</DX>
+            <DY>3</DY>
+            <DZ>4</DZ>
+            <File/>
+            <Description></Description>
+        </ID>
+    </ListPE>
+    <CombinationPE>
+        <ID PE="1">
+            <PE PE="1-2">
+                <S>2</S>
+                <P>0</P>
+                <O>0</O>
+            </PE>
+        </ID>
+        <ID PE="2">
+            <PE PE="2-3">
+                <S>3</S>
+                <P>0</P>
+                <O>0</O>
+            </PE>
+        </ID>
+        <ID PE="3">
+            <PE PE="3-4">
+                <S>4</S>
+                <P>0</P>
+                <O>0</O>
+            </PE>
+        </ID>
+    </CombinationPE>
+</Project>

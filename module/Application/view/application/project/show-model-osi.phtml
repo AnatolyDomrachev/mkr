@@ -1,0 +1,1198 @@
+<?php
+
+//phpinfo();
+/** @var $user \Application\Entity\User */
+$user = $this->user;
+
+/** @var $project \Application\Entity\Project */
+$project = $this->project;
+
+/* echo "<pre>";
+print_r($project->getListPe()); */
+
+/** @var $designers \Application\Entity\User[] */
+//$designers = $this->designers;
+
+$userPeNumber=$this->userPeNumber;
+
+//Массив для построения параллелепипедов					
+foreach($project->getListPe() as $pe)
+          $cubes_tmp[]=array('peNumber'=>$pe->getNumber(),'x'=>$pe->getKx(),'y'=>$pe->getKy()
+				,'z'=>$pe->getKz(),'dx'=>$pe->getDx(),'dy'=>$pe->getDy(),'dz'=>$pe->getDz());
+
+//Масштабируем фигуры и находим сдвиг относительно центра изображения				
+foreach($cubes_tmp as $p)
+							foreach($cubes_tmp as $_p)
+		$distances[]=sqrt(($p['x']-$_p['x'])*($p['x']-$_p['x'])+($p['y']-$_p['y'])*($p['y']-$_p['y'])+($p['z']-$_p['z'])*($p['z']-$_p['z']));
+		$distance=max($distances);
+			
+						foreach($cubes_tmp as $p){
+							foreach($cubes_tmp as $_p){
+		if($distance==sqrt(($p['x']-$_p['x'])*($p['x']-$_p['x'])+($p['y']-$_p['y'])*($p['y']-$_p['y'])+($p['z']-$_p['z'])*($p['z']-$_p['z'])))
+		{
+		
+		$dx=( $p['x']+$_p['x'] )/2 ;
+		$dy=( $p['y']+$_p['y'] )/2 ;
+		$dz=( $p['z']+$_p['z'] )/2 ;
+		
+		}}}
+	
+$distance = $distance/2;
+
+
+		
+foreach($project->getListPe() as $pe)
+  $cubes[$pe->getNumber()]=array('peNumber'=>$pe->getNumber(),
+ 'x'=> ($pe->getKx()-$dx)/$distance,'y'=> ($pe->getKy()-$dy)/$distance,
+'z'=> ($pe->getKz()-$dz)/$distance,'dx'=> $pe->getDx()/$distance,
+'dy'=> $pe->getDy()/$distance,'dz'=>$pe->getDz()/$distance,
+	'img'=>'img/'.$pe->getNumber().'.png'); 
+	
+/* 	print_r($cubes);
+	echo $distance; */
+
+//Подготовка изображений на гранях
+$dir = dirname(dirname(dirname(dirname(dirname(__DIR__))))).'\public';
+chdir($dir);
+foreach($cubes as $obj){
+$im = imagecreate(40, 40);
+$bg = imagecolorallocate($im, 255, 0, 0);
+$textcolor = imagecolorallocate($im, 0, 0, 0);
+imagestring($im, 40, 5, 10, $obj[peNumber], $textcolor);
+$im_p = imagecreatetruecolor(128, 128);
+imagecopyresampled($im_p, $im, 0, 0, 0, 0, 128, 128, 40, 40);
+imagepng($im_p,$obj[img]);
+imagedestroy($im);
+}
+
+//Создание массива координат стержней
+
+
+
+//Строим массив центров соединённых фигур
+ foreach($project->getListPe() as $pe){ 
+    foreach($project->getListPe() as $_pe){
+        if($_pe->getNumber() != 1){ 
+            $SCount=$pe->getSCombination($_pe->getNumber()).'<p>';
+			if($SCount>0)
+				$sterzhni[]=array('count'=>$SCount,
+					'x1'=>$cubes[$pe->getNumber()]['x'],'y1'=>$cubes[$pe->getNumber()]['y'],'z1'=>$cubes[$pe->getNumber()]['z'],
+					'x2'=>$cubes[$_pe->getNumber()]['x'],'y2'=>$cubes[$_pe->getNumber()]['y'],'z2'=>$cubes[$_pe->getNumber()]['z']);
+        } 
+    }
+}
+
+//Находим ширину основания стержня ds
+foreach($cubes as $p){
+$diameter[]=$p['dx'];
+$diameter[]=$p['dy'];
+$diameter[]=$p['dz'];
+}
+$ds = min($diameter)/3;
+
+//Строим массив для отрисовки стержней
+/* echo "<pre>";
+print_r($sterzhni); */
+$i=0;
+foreach ($sterzhni as $s){
+$dx1=$s['x1']-$s['x2'];
+$dy1=$s['y1']-$s['y2'];
+$dz1=$s['z1']-$s['z2'];
+$SLength=sqrt(pow($dx1,2)+pow($dy1,2)+pow($dz1,2));
+//Геометрия, однако
+
+/* echo "<pre>$dx1\n$dy1\n$dz1\n$SLength\n\n";
+die(); */
+
+/* switch($SLength){
+	case abs($dx1):
+		$dx=0;$dy=$ds;$dz=$ds;
+		break;
+	case abs($dy1):
+		$dx=ds;$dy=0;$dz=$ds;
+		break;	
+	case abs($dz1):
+		$dx=ds;$dy=$ds;$dz=0;
+		break;	
+	default:
+		$dx=$ds*$dy1/ $SLength/sqrt(1-pow($dz1/$SLength,2));
+		$dy=$ds*$dx1/$SLength/sqrt(1-pow($dz1/$SLength,2));
+		$dz=$ds*$dx1/$SLength/sqrt(1-pow($dy1/$SLength,2));
+		
+		$dx=$ds*sqrt(pow($dy1,2)+pow($dz1,2))/sqrt(pow($dy1,2)+pow($dz1,2)+pow($dx1,2));
+		$dy=$ds*sqrt(pow($dx1,2)+pow($dz1,2))/sqrt(pow($dy1,2)+pow($dz1,2)+pow($dx1,2));
+		$dz=$ds*sqrt(pow($dy1,2)+pow($dx1,2))/sqrt(pow($dy1,2)+pow($dz1,2)+pow($dx1,2));
+} */
+	$dx=$ds*sqrt(pow($dy1,2)+pow($dz1,2))/sqrt(pow($dy1,2)+pow($dz1,2)+pow($dx1,2));
+	$dy=$ds*sqrt(pow($dx1,2)+pow($dz1,2))/sqrt(pow($dy1,2)+pow($dz1,2)+pow($dx1,2));
+	$dz=$ds*sqrt(pow($dy1,2)+pow($dx1,2))/sqrt(pow($dy1,2)+pow($dz1,2)+pow($dx1,2));	
+	
+/* if($dx1==$SLength){
+	$dx=0;$dy=$dy1;$dz=$dz1;
+}
+else{
+	if($dy1==$SLength){
+		$dx=dx1;$dy=0;$dz=$dz1;
+	}
+	else{
+		if($dz1==$SLength){
+			$dx=dx1;$dy=$dy1;$dz=0;
+		}
+		else{
+$dx=$ds*$dy1/$SLength/sqrt(1-pow($dz1/$SLength,2));
+$dy=$ds*$dx1/$SLength/sqrt(1-pow($dz1/$SLength,2));
+$dz=$ds*$dx1/$SLength/sqrt(1-pow($dy1/$SLength,2));
+}}} */
+$SPoints[]=array('number'=>$i,'coords'=>array(
+				//Право
+				$s['x1']+$dx,$s['y1']-$dy,$s['z1']+$dz,
+				$s['x2']+$dx,$s['y2']-$dy,$s['z2']+$dz,
+				$s['x2']+$dx,$s['y2']+$dy,$s['z2']-$dz,
+				$s['x1']+$dx,$s['y1']+$dy,$s['z1']-$dz,
+				//лево
+				$s['x1']-$dx,$s['y1']-$dy,$s['z1']+$dz,
+				$s['x2']-$dx,$s['y2']-$dy,$s['z2']+$dz,
+				$s['x2']-$dx,$s['y2']+$dy,$s['z2']-$dz,
+				$s['x1']-$dx,$s['y1']+$dy,$s['z1']-$dz,
+				//верх
+				$s['x1']+$dx,$s['y1']+$dy,$s['z1']-$dz,
+				$s['x2']+$dx,$s['y2']+$dy,$s['z2']-$dz,
+				$s['x2']-$dx,$s['y2']+$dy,$s['z2']-$dz,
+				$s['x1']-$dx,$s['y1']+$dy,$s['z1']-$dz,
+				//низ
+				$s['x1']+$dx,$s['y1']-$dy,$s['z1']+$dz,
+				$s['x2']+$dx,$s['y2']-$dy,$s['z2']+$dz,
+				$s['x2']-$dx,$s['y2']-$dy,$s['z2']+$dz,
+				$s['x1']-$dx,$s['y1']-$dy,$s['z1']+$dz		
+				));
+$i++;				
+}
+/* echo'<pre>';
+print_r($SPoints);
+die(); */
+
+
+/* 	if(abs($s['x1']-$s['x2'])>=abs($s['y1']-$s['y2'])&& abs($s['x1']-$s['x2'])>=abs($s['z1']-$s['z2']))
+		$SPoints=array($s['x1'],$s['y1']-$ds,$s['z1']-$ds,
+					$s['x1'],$s['y1']-$ds,$s['z1']+$ds,
+					$s['x2'],$s['y2']-$ds,$s['z2']+$ds,
+					$s['x2'],$s['y2']-$ds,$s['z2']-$ds,
+					);
+	if(abs($s['y1']-$s['y2'])>abs($s['x1']-$s['x2'])&& abs($s['y1']-$s['y2'])>abs($s['z1']-$s['z2']))
+		echo abs($s['y1']-$s['y2']);
+	if(abs($s['z1']-$s['z2'])>abs($s['x1']-$s['x2'])&& abs($s['z1']-$s['z2'])>abs($s['y1']-$s['y2']))
+		echo abs($s['z1']-$s['z2']);
+	if(abs($s['z1']-$s['z2'])>abs($s['x1']-$s['x2'])&& abs($s['z1']-$s['z2'])>abs($s['y1']-$s['y2']))
+		echo abs($s['z1']-$s['z2']); */
+
+
+?>
+
+<?php 
+//Рисование 3D модели
+?>
+
+<html>
+<head>
+<title>3D in WebGL!</title>
+<meta charset="utf-8" />
+</head>
+<body>
+<canvas id="canvas3D" width="800" height="600">Ваш браузер не поддерживает элемент canvas</canvas>
+<script  type="text/javascript" src="/js/gl-matrix-min.js"></script>
+
+ 
+<script id="shader-vs" type="x-shader/x-vertex">
+  attribute vec3 aVertexPosition;
+  attribute vec3 aVertexNormal;
+  attribute vec2 aVertexTextureCoords;
+ 
+  uniform mat4 uMVMatrix;
+  uniform mat4 uPMatrix;
+  uniform mat3 uNMatrix;
+   
+  uniform vec3 uLightPosition;
+  uniform vec3 uAmbientLightColor;
+  uniform vec3 uDiffuseLightColor;
+  uniform vec3 uSpecularLightColor;
+   
+  varying vec2 vTextureCoords;
+  varying vec3 vLightWeighting;
+   
+  const float shininess = 16.0;
+     
+  void main() {
+    // установка позиции наблюдателя сцены
+    vec4 vertexPositionEye4 = uMVMatrix * vec4(aVertexPosition, 1.0);
+    vec3 vertexPositionEye3 = vertexPositionEye4.xyz / vertexPositionEye4.w;
+   
+    // получаем вектор направления света
+    vec3 lightDirection = normalize(uLightPosition - vertexPositionEye3);
+     
+    // получаем нормаль
+    vec3 normal = normalize(uNMatrix * aVertexNormal);
+     
+    // получаем скалярное произведение векторов нормали и направления света
+    float diffuseLightDot = max(dot(normal, lightDirection), 0.0);
+                                        
+    // получаем вектор отраженного луча и нормализуем его
+    vec3 reflectionVector = normalize(reflect(-lightDirection, normal));
+     
+    // установка вектора камеры
+    vec3 viewVectorEye = -normalize(vertexPositionEye3);
+     
+    float specularLightDot = max(dot(reflectionVector, viewVectorEye), 0.0);
+     
+    float specularLightParam = pow(specularLightDot, shininess);
+ 
+    // отраженный свет равен сумме фонового, диффузного и зеркального отражений света
+    vLightWeighting = uAmbientLightColor + uDiffuseLightColor * diffuseLightDot +
+                      uSpecularLightColor * specularLightParam;
+     
+     // Finally transform the geometry
+     gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+     vTextureCoords = aVertexTextureCoords;  
+  }                
+</script>
+ 
+<script id="shader-fs" type="x-shader/x-fragment">
+  precision mediump float;
+   
+  varying vec2 vTextureCoords;
+  varying vec3 vLightWeighting;
+  uniform sampler2D uSampler;
+   
+  void main() {   
+    vec4 texelColor = texture2D(uSampler, vTextureCoords);
+    gl_FragColor = vec4(vLightWeighting.rgb * texelColor.rgb, texelColor.a);
+  } 
+</script>
+ 
+<script type="text/javascript">
+
+<?php foreach($cubes as $cube): ?>
+var X<?php echo $cube['peNumber'];?>VertexBuffer;
+var X<?php echo $cube['peNumber'];?>IndexBuffer;
+var X<?php echo $cube['peNumber'];?>TextureCoordsBuffer;
+var X<?php echo $cube['peNumber'];?>Texture;
+<?php endforeach;?>
+
+<?php foreach($SPoints as $P): ?>
+var P<?php echo $P['number'];?>VertexBuffer;
+var P<?php echo $P['number'];?>IndexBuffer;
+var P<?php echo $P['number'];?>TextureCoordsBuffer;
+var P<?php echo $P['number'];?>Texture;
+<?php endforeach;?>
+var gl;
+var shaderProgram;
+ 
+ // переменная для хранения текстуры кирпичной стены
+var angle = -Math.PI/2; //угол вращения в радианах
+var angle2 = 0.0; //угол вращения в радианах
+var angle3 = 0.0; //угол вращения в радианах
+
+var zTranslation = -2.0; // смещение по оси Z
+var xTranslation = 0.0;
+var yTranslation = 0.0;
+
+var kd = 1;
+
+var mvMatrix = mat4.create(); 
+var pMatrix = mat4.create();
+var nMatrix = mat3.create();  // матрица нормалей
+ 
+// установка шейдеров
+function initShaders() {
+    var fragmentShader = getShader(gl.FRAGMENT_SHADER, 'shader-fs');
+    var vertexShader = getShader(gl.VERTEX_SHADER, 'shader-vs');
+ 
+    shaderProgram = gl.createProgram();
+ 
+    gl.attachShader(shaderProgram, vertexShader);
+    gl.attachShader(shaderProgram, fragmentShader);
+ 
+    gl.linkProgram(shaderProgram);
+      
+    if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
+        alert("Не удалось установить шейдеры");
+    }
+      
+    gl.useProgram(shaderProgram);
+ 
+    shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "aVertexPosition"); 
+    gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
+     
+    shaderProgram.vertexTextureAttribute = gl.getAttribLocation(shaderProgram, "aVertexTextureCoords");
+    gl.enableVertexAttribArray(shaderProgram.vertexTextureAttribute);
+     
+    // атрибут нормали
+    shaderProgram.vertexNormalAttribute = gl.getAttribLocation(shaderProgram, "aVertexNormal");
+    gl.enableVertexAttribArray(shaderProgram.vertexNormalAttribute);
+     
+    // настройка параметров uniform матриц для передачи в шейдер
+    shaderProgram.MVMatrix = gl.getUniformLocation(shaderProgram, "uMVMatrix");
+    shaderProgram.ProjMatrix = gl.getUniformLocation(shaderProgram, "uPMatrix");
+    shaderProgram.NormalMatrix = gl.getUniformLocation(shaderProgram, "uNMatrix"); 
+     
+    // настройка переменных uniform освещения для передачи в шейдер
+    // позиция источника света
+    shaderProgram.uniformLightPosition = gl.getUniformLocation(shaderProgram, "uLightPosition");
+    // фоновое отражение света
+    shaderProgram.uniformAmbientLightColor = gl.getUniformLocation(shaderProgram, "uAmbientLightColor");  
+    // диффузное отражение света
+    shaderProgram.uniformDiffuseLightColor = gl.getUniformLocation(shaderProgram, "uDiffuseLightColor");
+    // зеркальное отражение света
+    shaderProgram.uniformSpecularLightColor = gl.getUniformLocation(shaderProgram, "uSpecularLightColor");
+}
+
+function setupLights() {
+  //gl.uniform3fv(shaderProgram.uniformLightPosition, [0.0, 10.0, 5.0]);
+  gl.uniform3fv(shaderProgram.uniformLightPosition, [0.0, -1.0, -1.0]);
+  
+/*   gl.uniform3fv(shaderProgram.uniformAmbientLightColor, [0.1, 0.1, 0.1]);
+  gl.uniform3fv(shaderProgram.uniformDiffuseLightColor, [0.7, 0.7, 0.7]);
+  gl.uniform3fv(shaderProgram.uniformSpecularLightColor, [1.0, 1.0, 1.0]); */
+  
+  gl.uniform3fv(shaderProgram.uniformAmbientLightColor, [0.3, 0.3, 0.3]);
+  gl.uniform3fv(shaderProgram.uniformDiffuseLightColor, [0.7, 0.7, 0.7]);
+  gl.uniform3fv(shaderProgram.uniformSpecularLightColor, [1.0, 1.0, 1.0]);
+}
+
+function setMatrixUniforms(){
+    gl.uniformMatrix4fv(shaderProgram.ProjMatrix,false, pMatrix);
+    gl.uniformMatrix4fv(shaderProgram.MVMatrix, false, mvMatrix);
+    //  установка матрицы нормалей
+    gl.uniformMatrix3fv(shaderProgram.NormalMatrix, false, nMatrix);
+} 
+// Функция создания шейдера
+function getShader(type,id) {
+    var source = document.getElementById(id).innerHTML;
+ 
+    var shader = gl.createShader(type);
+     
+    gl.shaderSource(shader, source);
+ 
+    gl.compileShader(shader);
+   
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+        alert("Ошибка компиляции шейдера: " + gl.getShaderInfoLog(shader));
+        gl.deleteShader(shader);   
+        return null;
+    }
+    return shader;  
+}
+
+<?php foreach($cubes as $cube): ?>
+
+function initX<?php echo $cube['peNumber'];?>Buffers() {
+ 
+    var vertices =[
+// лицевая часть
+<?php echo $cube['x']; ?>- <?php echo $cube['dx'] ; ?> * kd,<?php echo $cube['y']; ?>- <?php echo $cube['dy'] ; ?> * kd,<?php echo $cube['z']; ?>- <?php echo $cube['dz'] ; ?> * kd,
+<?php echo $cube['x']; ?>- <?php echo $cube['dx'] ; ?> * kd,<?php echo $cube['y']; ?>+ <?php echo $cube['dy'] ; ?> * kd,<?php echo $cube['z']; ?>- <?php echo $cube['dz'] ; ?> * kd,
+<?php echo $cube['x']; ?>+ <?php echo $cube['dx'] ; ?> * kd,<?php echo $cube['y']; ?>+ <?php echo $cube['dy'] ; ?> * kd,<?php echo $cube['z']; ?>- <?php echo $cube['dz'] ; ?> * kd,
+<?php echo $cube['x']; ?>+ <?php echo $cube['dx'] ; ?> * kd,<?php echo $cube['y']; ?>- <?php echo $cube['dy'] ; ?> * kd,<?php echo $cube['z']; ?>- <?php echo $cube['dz'] ; ?> * kd,
+// задняя часть
+<?php echo $cube['x']; ?>- <?php echo $cube['dx'] ; ?> * kd,<?php echo $cube['y']; ?>- <?php echo $cube['dy'] ; ?> * kd,<?php echo $cube['z']; ?>+ <?php echo $cube['dz'] ; ?> * kd,
+<?php echo $cube['x']; ?>+ <?php echo $cube['dx'] ; ?> * kd,<?php echo $cube['y']; ?>- <?php echo $cube['dy'] ; ?> * kd,<?php echo $cube['z']; ?>+ <?php echo $cube['dz'] ; ?> * kd,
+<?php echo $cube['x']; ?>+ <?php echo $cube['dx'] ; ?> * kd,<?php echo $cube['y']; ?>+ <?php echo $cube['dy'] ; ?> * kd,<?php echo $cube['z']; ?>+ <?php echo $cube['dz'] ; ?> * kd,
+<?php echo $cube['x']; ?>- <?php echo $cube['dx'] ; ?> * kd,<?php echo $cube['y']; ?>+ <?php echo $cube['dy'] ; ?> * kd,<?php echo $cube['z']; ?>+ <?php echo $cube['dz'] ; ?> * kd,
+//левая боковая часть
+<?php echo $cube['x']; ?>- <?php echo $cube['dx'] ; ?> * kd,<?php echo $cube['y']; ?>- <?php echo $cube['dy'] ; ?> * kd,<?php echo $cube['z']; ?>- <?php echo $cube['dz'] ; ?> * kd,
+<?php echo $cube['x']; ?>- <?php echo $cube['dx'] ; ?> * kd,<?php echo $cube['y']; ?>- <?php echo $cube['dy'] ; ?> * kd,<?php echo $cube['z']; ?>+ <?php echo $cube['dz'] ; ?> * kd,
+<?php echo $cube['x']; ?>- <?php echo $cube['dx'] ; ?> * kd,<?php echo $cube['y']; ?>+ <?php echo $cube['dy'] ; ?> * kd,<?php echo $cube['z']; ?>+ <?php echo $cube['dz'] ; ?> * kd,
+<?php echo $cube['x']; ?>- <?php echo $cube['dx'] ; ?> * kd,<?php echo $cube['y']; ?>+ <?php echo $cube['dy'] ; ?> * kd,<?php echo $cube['z']; ?>- <?php echo $cube['dz'] ; ?> * kd,
+// правая боковая часть
+<?php echo $cube['x']; ?>+ <?php echo $cube['dx'] ; ?> * kd,<?php echo $cube['y']; ?>- <?php echo $cube['dy'] ; ?> * kd,<?php echo $cube['z']; ?>- <?php echo $cube['dz'] ; ?> * kd,
+<?php echo $cube['x']; ?>+ <?php echo $cube['dx'] ; ?> * kd,<?php echo $cube['y']; ?>+ <?php echo $cube['dy'] ; ?> * kd,<?php echo $cube['z']; ?>- <?php echo $cube['dz'] ; ?> * kd,
+<?php echo $cube['x']; ?>+ <?php echo $cube['dx'] ; ?> * kd,<?php echo $cube['y']; ?>+ <?php echo $cube['dy'] ; ?> * kd,<?php echo $cube['z']; ?>+ <?php echo $cube['dz'] ; ?> * kd,
+<?php echo $cube['x']; ?>+ <?php echo $cube['dx'] ; ?> * kd,<?php echo $cube['y']; ?>- <?php echo $cube['dy'] ; ?> * kd,<?php echo $cube['z']; ?>+ <?php echo $cube['dz'] ; ?> * kd,
+// низ
+<?php echo $cube['x']; ?>- <?php echo $cube['dx'] ; ?> * kd,<?php echo $cube['y']; ?>- <?php echo $cube['dy'] ; ?> * kd,<?php echo $cube['z']; ?>- <?php echo $cube['dz'] ; ?> * kd,
+<?php echo $cube['x']; ?>- <?php echo $cube['dx'] ; ?> * kd,<?php echo $cube['y']; ?>- <?php echo $cube['dy'] ; ?> * kd,<?php echo $cube['z']; ?>+ <?php echo $cube['dz'] ; ?> * kd,
+<?php echo $cube['x']; ?>+ <?php echo $cube['dx'] ; ?> * kd,<?php echo $cube['y']; ?>- <?php echo $cube['dy'] ; ?> * kd,<?php echo $cube['z']; ?>+ <?php echo $cube['dz'] ; ?> * kd,
+<?php echo $cube['x']; ?>+ <?php echo $cube['dx'] ; ?> * kd,<?php echo $cube['y']; ?>- <?php echo $cube['dy'] ; ?> * kd,<?php echo $cube['z']; ?>- <?php echo $cube['dz'] ; ?> * kd,
+// верх
+<?php echo $cube['x']; ?>- <?php echo $cube['dx'] ; ?> * kd,<?php echo $cube['y']; ?>+ <?php echo $cube['dy'] ; ?> * kd,<?php echo $cube['z']; ?>- <?php echo $cube['dz'] ; ?> * kd,
+<?php echo $cube['x']; ?>- <?php echo $cube['dx'] ; ?> * kd,<?php echo $cube['y']; ?>+ <?php echo $cube['dy'] ; ?> * kd,<?php echo $cube['z']; ?>+ <?php echo $cube['dz'] ; ?> * kd,
+<?php echo $cube['x']; ?>+ <?php echo $cube['dx'] ; ?> * kd,<?php echo $cube['y']; ?>+ <?php echo $cube['dy'] ; ?> * kd,<?php echo $cube['z']; ?>+ <?php echo $cube['dz'] ; ?> * kd,
+<?php echo $cube['x']; ?>+ <?php echo $cube['dx'] ; ?> * kd,<?php echo $cube['y']; ?>+ <?php echo $cube['dy'] ; ?> * kd,<?php echo $cube['z']; ?>- <?php echo $cube['dz'] ; ?> * kd,
+];
+                  
+    var indices = [ // лицевая часть
+                0, 1, 2, 
+                2, 3, 0,
+                // задняя часть
+                4, 5, 6,
+                6, 7, 4,
+                //левая боковая часть
+                8, 9, 10, 
+                10, 11, 8,
+                // правая боковая часть
+                12, 13, 14, 
+                14, 15, 12,
+                // низ
+                16, 17, 18, 
+                18, 19, 16,
+                // верх
+                20, 21, 22, 
+                22, 23, 20
+				];
+ 
+    X<?php echo $cube['peNumber'];?>VertexBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, X<?php echo $cube['peNumber'];?>VertexBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+    X<?php echo $cube['peNumber'];?>VertexBuffer.itemSize = 3;
+ 
+    X<?php echo $cube['peNumber'];?>IndexBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, X<?php echo $cube['peNumber'];?>IndexBuffer);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
+    X<?php echo $cube['peNumber'];?>IndexBuffer.numberOfItems = indices.length; 
+   
+  // Координаты текстуры
+  var textureCoords = [
+                0.0, 0.0,
+                0.0, 1.0,
+                1.0, 1.0,
+                1.0, 0.0,
+                 
+                0.0, 0.0,
+                0.0, 1.0,
+                1.0, 1.0,
+                1.0, 0.0,
+                 
+                0.0, 0.0,
+                0.0, 1.0,
+                1.0, 1.0,
+                1.0, 0.0,
+                 
+                0.0, 0.0,
+                0.0, 1.0,
+                1.0, 1.0,
+                1.0, 0.0,
+				
+				0.0, 0.0,
+                0.0, 1.0,
+                1.0, 1.0,
+                1.0, 0.0,
+                 
+                0.0, 0.0,
+                0.0, 1.0,
+                1.0, 1.0,
+                1.0, 0.0
+  ];
+
+    // Создание буфера координат текстуры
+    X<?php echo $cube['peNumber'];?>TextureCoordsBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, X<?php echo $cube['peNumber'];?>TextureCoordsBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoords), gl.STATIC_DRAW);
+    X<?php echo $cube['peNumber'];?>TextureCoordsBuffer.itemSize=2;
+
+	var normals = [
+           // Лицевая сторона
+           0.0,  0.0,  1.0, //v0
+           0.0,  0.0,  1.0, //v1
+           0.0,  0.0,  1.0, //v2
+           0.0,  0.0,  1.0, //v3
+      
+           // Задняя сторона
+           0.0,  0.0, -1.0, //v4
+           0.0,  0.0, -1.0, //v5
+           0.0,  0.0, -1.0, //v6
+           0.0,  0.0, -1.0, //v7
+            
+           // Левая боковая сторона
+          -1.0,  0.0,  0.0, //v8
+          -1.0,  0.0,  0.0, //v9
+          -1.0,  0.0,  0.0, //v10
+          -1.0,  0.0,  0.0, //v11
+            
+           // Правая боковая сторона
+           1.0,  0.0,  0.0, //v12
+           1.0,  0.0,  0.0, //v13
+           1.0,  0.0,  0.0, //v14
+           1.0,  0.0,  0.0, //v15
+		   //низ
+		   0.0, -1.0, 0.0,
+		   0.0, -1.0, 0.0,
+		   0.0, -1.0, 0.0,
+		   0.0, -1.0, 0.0,
+		   //верх
+		   0.0, 1.0, 0.0,
+		   0.0, 1.0, 0.0,
+		   0.0, 1.0, 0.0,
+		   0.0, 1.0, 0.0,
+    ];
+     
+    // Создаем буфер нормалей куба
+    X<?php echo $cube['peNumber'];?>vertexNormalBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, X<?php echo $cube['peNumber'];?>vertexNormalBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normals), gl.STATIC_DRAW);
+    X<?php echo $cube['peNumber'];?>vertexNormalBuffer.itemSize = 3;	
+	}
+
+function X<?php echo $cube['peNumber'];?>Draw() {    
+ 
+    gl.bindBuffer(gl.ARRAY_BUFFER, X<?php echo $cube['peNumber'];?>VertexBuffer);
+    gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, 
+                         X<?php echo $cube['peNumber'];?>VertexBuffer.itemSize, gl.FLOAT, false, 0, 0);
+     
+ 
+    gl.bindBuffer(gl.ARRAY_BUFFER, X<?php echo $cube['peNumber'];?>TextureCoordsBuffer);
+    gl.vertexAttribPointer(shaderProgram.vertexTextureAttribute,
+                         X<?php echo $cube['peNumber'];?>TextureCoordsBuffer.itemSize, gl.FLOAT, false, 0, 0);
+						 
+	gl.bindBuffer(gl.ARRAY_BUFFER, X<?php echo $cube['peNumber'];?>vertexNormalBuffer);
+    gl.vertexAttribPointer(shaderProgram.vertexNormalAttribute, 
+                         X<?php echo $cube['peNumber'];?>vertexNormalBuffer.itemSize, gl.FLOAT, false, 0, 0);
+						 
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, X<?php echo $cube['peNumber'];?>Texture);
+    gl.enable(gl.DEPTH_TEST);
+    gl.drawElements(gl.TRIANGLES, X<?php echo $cube['peNumber'];?>IndexBuffer.numberOfItems, gl.UNSIGNED_SHORT,0);
+}
+
+<?php endforeach; ?>
+
+
+// Sterzhen 
+
+
+<?php foreach($SPoints as $P): ?>
+
+function initP<?php echo $P['number'];?>Buffers() {
+ 
+    var vertices =[
+<?php foreach($P[coords] as $_P): ?>
+	<?php echo $_P; ?>,
+<?php endforeach; ?>
+];
+                  
+    var indices = [ // лицевая часть
+                0, 1, 2, 
+                2, 3, 0,
+                // задняя часть
+                4, 5, 6,
+                6, 7, 4,
+                //левая боковая часть
+                8, 9, 10, 
+                10, 11, 8,
+                // правая боковая часть
+                12, 13, 14, 
+                14, 15, 12,
+				];
+ 
+    P<?php echo $P['number'];?>VertexBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, P<?php echo $P['number'];?>VertexBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+    P<?php echo $P['number'];?>VertexBuffer.itemSize = 3;
+ 
+    P<?php echo $P['number'];?>IndexBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, P<?php echo $P['number'];?>IndexBuffer);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
+    P<?php echo $P['number'];?>IndexBuffer.numberOfItems = indices.length; 
+   
+  // Координаты текстуры
+  var textureCoords = [
+                0.0, 0.0,
+                0.0, 1.0,
+                1.0, 1.0,
+                1.0, 0.0,
+                 
+                0.0, 0.0,
+                0.0, 1.0,
+                1.0, 1.0,
+                1.0, 0.0,
+                 
+                0.0, 0.0,
+                0.0, 1.0,
+                1.0, 1.0,
+                1.0, 0.0,
+                 
+                0.0, 0.0,
+                0.0, 1.0,
+                1.0, 1.0,
+                1.0, 0.0,
+  ];
+
+    // Создание буфера координат текстуры
+    P<?php echo $P['number'];?>TextureCoordsBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, P<?php echo $P['number'];?>TextureCoordsBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoords), gl.STATIC_DRAW);
+    P<?php echo $P['number'];?>TextureCoordsBuffer.itemSize=2;
+	
+		var normals = [
+           // Лицевая сторона
+           0.0,  0.0,  1.0, //v0
+           0.0,  0.0,  1.0, //v1
+           0.0,  0.0,  1.0, //v2
+           0.0,  0.0,  1.0, //v3
+      
+           // Задняя сторона
+           0.0,  0.0, -1.0, //v4
+           0.0,  0.0, -1.0, //v5
+           0.0,  0.0, -1.0, //v6
+           0.0,  0.0, -1.0, //v7
+            
+           // Левая боковая сторона
+          -1.0,  0.0,  0.0, //v8
+          -1.0,  0.0,  0.0, //v9
+          -1.0,  0.0,  0.0, //v10
+          -1.0,  0.0,  0.0, //v11
+            
+           // Правая боковая сторона
+           1.0,  0.0,  0.0, //v12
+           1.0,  0.0,  0.0, //v13
+           1.0,  0.0,  0.0, //v14
+           1.0,  0.0,  0.0, //v15
+		   //низ
+		   0.0, -1.0, 0.0,
+		   0.0, -1.0, 0.0,
+		   0.0, -1.0, 0.0,
+		   0.0, -1.0, 0.0,
+		   //верх
+		   0.0, 1.0, 0.0,
+		   0.0, 1.0, 0.0,
+		   0.0, 1.0, 0.0,
+		   0.0, 1.0, 0.0,
+    ];
+     
+    // Создаем буфер нормалей куба
+    P<?php echo $P['number'];?>vertexNormalBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, P<?php echo $P['number'];?>vertexNormalBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normals), gl.STATIC_DRAW);
+    P<?php echo $P['number'];?>vertexNormalBuffer.itemSize = 3;	
+}
+
+function P<?php echo $P['number'];?>Draw() {    
+ 
+    gl.bindBuffer(gl.ARRAY_BUFFER, P<?php echo $P['number'];?>VertexBuffer);
+    gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, 
+                         P<?php echo $P['number'];?>VertexBuffer.itemSize, gl.FLOAT, false, 0, 0);
+     
+ 
+    gl.bindBuffer(gl.ARRAY_BUFFER, P<?php echo $P['number'];?>TextureCoordsBuffer);
+    gl.vertexAttribPointer(shaderProgram.vertexTextureAttribute,
+                         P<?php echo $P['number'];?>TextureCoordsBuffer.itemSize, gl.FLOAT, false, 0, 0);
+						 
+	gl.bindBuffer(gl.ARRAY_BUFFER, P<?php echo $P['number'];?>vertexNormalBuffer);
+    gl.vertexAttribPointer(shaderProgram.vertexNormalAttribute, 
+                         P<?php echo $P['number'];?>vertexNormalBuffer.itemSize, gl.FLOAT, false, 0, 0);					 
+						 
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, P<?php echo $P['number'];?>Texture);
+    gl.enable(gl.DEPTH_TEST);
+    gl.drawElements(gl.TRIANGLES, P<?php echo $P['number'];?>IndexBuffer.numberOfItems, gl.UNSIGNED_SHORT,0);
+}
+
+<?php endforeach; ?>
+
+//конец задания стержней
+
+//ОСИ
+function initOxBuffers() {
+
+var ox = -0.7;
+var oy = -0.7;
+var oz = -0.7;
+var lo = 0.01;
+var Lo=0.1;
+ 
+    var vertices =[
+// лицевая часть
+				ox,oy-lo,oz-lo,
+				ox,oy+lo,oz-lo,
+				ox,oy+lo,oz+lo,
+				ox,oy-lo,oz+lo,
+				//лево
+				ox+Lo,oy-lo,oz-lo,
+				ox+Lo,oy+lo,oz-lo,
+				ox+Lo,oy+lo,oz+lo,
+				ox+Lo,oy-lo,oz+lo,
+				//верх
+				ox,oy-lo,oz-lo,
+				ox,oy-lo,oz+lo,
+				ox+Lo,oy-lo,oz+lo,
+				ox+Lo,oy-lo,oz-lo,
+				//низ
+				ox,oy+lo,oz-lo,
+				ox,oy+lo,oz+lo,
+				ox+Lo,oy+lo,oz+lo,
+				ox+Lo,oy+lo,oz-lo,
+				//
+				ox,oy-lo,oz-lo,
+				ox,oy+lo,oz-lo,
+				ox+Lo,oy+lo,oz-lo,
+				ox+Lo,oy-lo,oz-lo,
+				//
+				ox,oy-lo,oz+lo,
+				ox,oy+lo,oz+lo,
+				ox+Lo,oy+lo,oz+lo,
+				ox+Lo,oy-lo,oz+lo,
+				];
+                  
+    var indices = [ // лицевая часть
+                0, 1, 2, 
+                2, 3, 0,
+                // задняя часть
+                4, 5, 6,
+                6, 7, 4,
+                //левая боковая часть
+                8, 9, 10, 
+                10, 11, 8,
+                // правая боковая часть
+                12, 13, 14, 
+                14, 15, 12,
+                // низ
+                16, 17, 18, 
+                18, 19, 16,
+                // верх
+                20, 21, 22, 
+                22, 23, 20
+				];
+ 
+   OxVertexBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER,OxVertexBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+   OxVertexBuffer.itemSize = 3;
+ 
+   OxIndexBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,OxIndexBuffer);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
+   OxIndexBuffer.numberOfItems = indices.length; 
+   
+  // Координаты текстуры
+  var textureCoords = [
+                0.0, 0.0,
+                0.0, 1.0,
+                1.0, 1.0,
+                1.0, 0.0,
+                 
+                0.0, 0.0,
+                0.0, 1.0,
+                1.0, 1.0,
+                1.0, 0.0,
+                 
+                0.0, 0.0,
+                0.0, 1.0,
+                1.0, 1.0,
+                1.0, 0.0,
+                 
+                0.0, 0.0,
+                0.0, 1.0,
+                1.0, 1.0,
+                1.0, 0.0,
+				
+				0.0, 0.0,
+                0.0, 1.0,
+                1.0, 1.0,
+                1.0, 0.0,
+                 
+                0.0, 0.0,
+                0.0, 1.0,
+                1.0, 1.0,
+                1.0, 0.0
+  ];
+
+    // Создание буфера координат текстуры
+   OxTextureCoordsBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER,OxTextureCoordsBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoords), gl.STATIC_DRAW);
+   OxTextureCoordsBuffer.itemSize=2;
+	
+	var normals = [
+           // Лицевая сторона
+           0.0,  0.0,  1.0, //v0
+           0.0,  0.0,  1.0, //v1
+           0.0,  0.0,  1.0, //v2
+           0.0,  0.0,  1.0, //v3
+      
+           // Задняя сторона
+           0.0,  0.0, -1.0, //v4
+           0.0,  0.0, -1.0, //v5
+           0.0,  0.0, -1.0, //v6
+           0.0,  0.0, -1.0, //v7
+            
+           // Левая боковая сторона
+          -1.0,  0.0,  0.0, //v8
+          -1.0,  0.0,  0.0, //v9
+          -1.0,  0.0,  0.0, //v10
+          -1.0,  0.0,  0.0, //v11
+            
+           // Правая боковая сторона
+           1.0,  0.0,  0.0, //v12
+           1.0,  0.0,  0.0, //v13
+           1.0,  0.0,  0.0, //v14
+           1.0,  0.0,  0.0, //v15
+		   //низ
+		   0.0, -1.0, 0.0,
+		   0.0, -1.0, 0.0,
+		   0.0, -1.0, 0.0,
+		   0.0, -1.0, 0.0,
+		   //верх
+		   0.0, 1.0, 0.0,
+		   0.0, 1.0, 0.0,
+		   0.0, 1.0, 0.0,
+		   0.0, 1.0, 0.0,
+    ];
+     
+    // Создаем буфер нормалей куба
+   OxvertexNormalBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER,OxvertexNormalBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normals), gl.STATIC_DRAW);
+   OxvertexNormalBuffer.itemSize = 3;	
+}
+
+function OxDraw() {    
+ 
+    gl.bindBuffer(gl.ARRAY_BUFFER, OxVertexBuffer);
+    gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, 
+                         OxVertexBuffer.itemSize, gl.FLOAT, false, 0, 0);
+     
+ 
+    gl.bindBuffer(gl.ARRAY_BUFFER, OxTextureCoordsBuffer);
+    gl.vertexAttribPointer(shaderProgram.vertexTextureAttribute,
+                         OxTextureCoordsBuffer.itemSize, gl.FLOAT, false, 0, 0);
+						 
+	gl.bindBuffer(gl.ARRAY_BUFFER, OxvertexNormalBuffer);
+    gl.vertexAttribPointer(shaderProgram.vertexNormalAttribute, 
+                         OxvertexNormalBuffer.itemSize, gl.FLOAT, false, 0, 0);					 
+						 
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, OxTexture);
+    gl.enable(gl.DEPTH_TEST);
+    gl.drawElements(gl.TRIANGLES, OxIndexBuffer.numberOfItems, gl.UNSIGNED_SHORT,0);
+}
+
+//Конец осей
+
+function setupWebGL()
+{
+    gl.clearColor(0.9, 1.0, 1.0, 1.0);  
+    gl.clear(gl.COLOR_BUFFER_BIT || gl.DEPTH_BUFFER_BIT); 
+     
+    gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
+    mat4.perspective(pMatrix, 1.04, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0);
+    mat4.identity(mvMatrix);
+    mat4.translate(mvMatrix,mvMatrix,[xTranslation, yTranslation, zTranslation]);
+    mat4.rotate(mvMatrix,mvMatrix, angle, [1, 0, 0]);
+	mat4.rotate(mvMatrix,mvMatrix, angle2, [0, 1, 0]); 
+	mat4.rotate(mvMatrix,mvMatrix, angle3, [0, 0, 1]); 
+ 
+    mat3.normalFromMat4(nMatrix, mvMatrix);
+}
+ function setupTextures() {
+	
+	<?php foreach($cubes as $cube): ?>
+	X<?php echo $cube['peNumber'];?>Texture = gl.createTexture();
+    setTexture("/<?php echo $cube['img'];?>", X<?php echo $cube['peNumber'];?>Texture);
+    <?php endforeach; ?>
+	
+	<?php foreach($SPoints as $P): ?>
+	 P<?php echo $P['number'];?>Texture = gl.createTexture();
+    setTexture("/img/sterzhen.png", P<?php echo $P['number'];?>Texture);
+     <?php endforeach; ?>
+	 
+	 OxTexture = gl.createTexture();
+    setTexture("/img/sterzhen.png", OxTexture);
+	
+/* 	SterzhenTexture = gl.createTexture();
+    setTexture("/img/sterzhen.png", SterzhenTexture); */
+ }
+function setTexture(url, texture){
+ 
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    var image = new Image();
+    image.onload = function() {
+     
+        handleTextureLoaded(image, texture);    
+  }
+   
+   image.src = url;
+ 
+    shaderProgram.samplerUniform = gl.getUniformLocation(shaderProgram, "uSampler");
+    gl.uniform1i(shaderProgram.samplerUniform, 0);
+}
+ function handleTextureLoaded(image, texture) {
+ 
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.bindTexture(gl.TEXTURE_2D, null);
+}
+window.onload=function(){
+ 
+    var canvas = document.getElementById("canvas3D");
+    try {
+        gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+    }
+    catch(e) {}
+   
+      if (!gl) {
+        alert("Ваш браузер не поддерживает WebGL");
+      }
+    if(gl){
+        document.addEventListener('keydown', handleKeyDown, false);
+        gl.viewportWidth = canvas.width;
+        gl.viewportHeight = canvas.height;
+ 
+        initShaders();
+
+		 <?php foreach($SPoints as $P): ?>
+		initP<?php echo $P['number'];?>Buffers();       
+		<?php endforeach; ?>
+		
+		<?php foreach($cubes as $cube): ?>
+		initX<?php echo $cube['peNumber'];?>Buffers();       
+		<?php endforeach; ?>
+		
+		//initOxBuffers();
+
+        setupTextures();
+		
+		setupLights();
+		
+        (function animloop(){
+             
+            setupWebGL();
+            setMatrixUniforms();
+			
+			<?php foreach($SPoints as $P): ?>
+            P<?php echo $P['number'];?>Draw();
+            <?php endforeach; ?>
+			
+			<?php foreach($cubes as $cube): ?>
+            X<?php echo $cube['peNumber'];?>Draw();
+            <?php endforeach; ?>
+			
+			//OxDraw();
+			
+            requestAnimFrame(animloop, canvas);
+        })();
+    }
+}
+
+
+
+function handleKeyDown(e){
+    switch(e.keyCode)
+    {
+        case 45:  
+            angle+=0.1;
+            break;
+        case 46: 
+            angle-=0.1;
+            break;
+		case 36:  
+            angle2+=0.1;
+            break;
+        case 35: 
+            angle2-=0.1;
+            break;
+		case 17:  
+            angle3+=0.1;
+            break;
+        case 18: 
+            angle3-=0.1;
+            break;
+        case 34: 
+            zTranslation+=0.1;
+            break;
+        case 33: 
+            zTranslation-=0.1;
+            break;
+        case 39: 
+            xTranslation+=0.1;
+            break;
+        case 37: 
+            xTranslation-=0.1;
+            break;
+        case 38: 
+            yTranslation+=0.1;
+            break;
+        case 40: 
+            yTranslation-=0.1;
+            break;
+		case 19: 
+            xTranslation=0.0;
+			yTranslation=0.0;
+			zTranslation=-2.0;
+			angle=-Math.PI/2;
+			angle2=0.0;
+			angle3=0.0;
+			UnShowLink();
+			break;
+		case 9: 
+            kd=0.5;
+		<?php foreach($SPoints as $P): ?>
+		initP<?php echo $P['number'];?>Buffers();       
+		<?php endforeach; ?>
+		
+		<?php foreach($cubes as $cube): ?>
+		initX<?php echo $cube['peNumber'];?>Buffers();       
+		<?php endforeach; ?>
+		
+			<?php foreach($SPoints as $P): ?>
+            P<?php echo $P['number'];?>Draw();
+            <?php endforeach; ?>
+			
+			<?php foreach($cubes as $cube): ?>
+            X<?php echo $cube['peNumber'];?>Draw();
+            <?php endforeach; ?>
+			break;
+		case 32: 
+            kd=1;
+		<?php foreach($SPoints as $P): ?>
+		initP<?php echo $P['number'];?>Buffers();       
+		<?php endforeach; ?>
+		
+		<?php foreach($cubes as $cube): ?>
+		initX<?php echo $cube['peNumber'];?>Buffers();       
+		<?php endforeach; ?>
+		
+			<?php foreach($SPoints as $P): ?>
+            P<?php echo $P['number'];?>Draw();
+            <?php endforeach; ?>
+			
+			<?php foreach($cubes as $cube): ?>
+            X<?php echo $cube['peNumber'];?>Draw();
+            <?php endforeach; ?>
+			break;
+    }
+}
+window.requestAnimFrame = (function(){
+      return  window.requestAnimationFrame       || 
+              window.webkitRequestAnimationFrame || 
+              window.mozRequestAnimationFrame    || 
+              window.oRequestAnimationFrame      || 
+              window.msRequestAnimationFrame     ||
+         function(callback, element) {
+           return window.setTimeout(callback, 1000/60);
+         };
+ 
+})();
+
+function X0Z(){
+	angle=-Math.PI/2;
+	angle2=0.0;
+	angle3=0.0;
+}
+
+function X0Y(){
+	angle=0.0;
+	angle2=0.0;
+	angle3=0.0;
+}
+
+function Y0Z(){
+	angle=-Math.PI/2;
+	angle2=0.0;
+	angle3=Math.PI/2;
+}
+function isometria(){
+	angle= -Math.PI/2;
+	angle2=Math.PI/6;
+	angle3=Math.PI/6;
+}
+function dimetria(){
+	angle=-Math.PI/2;
+	angle2=0;
+	angle3=Math.PI/4;
+}
+function XPlus(){
+	angle-=Math.PI/8;
+}
+function YPlus(){
+	angle2+=Math.PI/8;
+}
+function ZPlus(){
+	angle3+=Math.PI/8;
+}
+function XMinus(){
+	angle+=Math.PI/8;
+}
+function YMinus(){
+	angle2-=Math.PI/8;
+}
+function ZMinus(){
+	angle3-=Math.PI/8;
+}
+
+function ShowLink(){
+	            kd=0.5;
+		<?php foreach($SPoints as $P): ?>
+		initP<?php echo $P['number'];?>Buffers();       
+		<?php endforeach; ?>
+		
+		<?php foreach($cubes as $cube): ?>
+		initX<?php echo $cube['peNumber'];?>Buffers();       
+		<?php endforeach; ?>
+		
+			<?php foreach($SPoints as $P): ?>
+            P<?php echo $P['number'];?>Draw();
+            <?php endforeach; ?>
+			
+			<?php foreach($cubes as $cube): ?>
+            X<?php echo $cube['peNumber'];?>Draw();
+            <?php endforeach; ?>
+}
+
+function UnShowLink(){
+	            kd=1.0;
+		<?php foreach($SPoints as $P): ?>
+		initP<?php echo $P['number'];?>Buffers();       
+		<?php endforeach; ?>
+		
+		<?php foreach($cubes as $cube): ?>
+		initX<?php echo $cube['peNumber'];?>Buffers();       
+		<?php endforeach; ?>
+		
+			<?php foreach($SPoints as $P): ?>
+            P<?php echo $P['number'];?>Draw();
+            <?php endforeach; ?>
+			
+			<?php foreach($cubes as $cube): ?>
+            X<?php echo $cube['peNumber'];?>Draw();
+            <?php endforeach; ?>
+}
+
+
+
+</script>
+<p>
+<table cellpadding=2 border=0><tr><td>
+<input	type="image" src="/img/x0z.png" alt="ОК" onclick="X0Z();" /><td>
+<input	type="image" src="/img/x0y.png" alt="ОК" onclick="X0Y();" /><td>
+<input	type="image" src="/img/y0z.png" alt="ОК" onclick="Y0Z();" /><td>
+<input	type="image" src="/img/izometria.png" alt="ОК" onclick="dimetria();" /><td>
+<input	type="image" src="/img/dimetria.png" alt="ОК" onclick="isometria();" /><td>
+<input	type="image" src="/img/XPlus.png" alt="ОК" onclick="XPlus();" /><td>
+<input	type="image" src="/img/XMinus.png" alt="ОК" onclick="XMinus();" /><td>
+<input	type="image" src="/img/YPlus.png" alt="ОК" onclick="YMinus();" /><td>
+<input	type="image" src="/img/YMinus.png" alt="ОК" onclick="YPlus();" /><td>
+<input	type="image" src="/img/ZPlus.png" alt="ОК" onclick="ZPlus();" /><td>
+<input	type="image" src="/img/ZMinus.png" alt="ОК" onclick="ZMinus();" /><td>
+<input	type="image" src="/img/ShowLinks.png" alt="ОК" onclick="ShowLink();" /><td>
+<input	type="image" src="/img/UnShowLinks.png" alt="ОК" onclick="UnShowLink();" />
+</table>
+Используйте курсоры и PgUp, PgDown для перемещений по осям, Pause - исходное положение
+
+<!--
+	<input id="b1" value="Проекция Y0Z" onclick="Y0Z();" type="button"/>
+	<input id="b1" value="Изометрия" onclick="isometria();" type="button"/>
+	<input id="b1" value="Диметрия" onclick="dimetria();" type="button"/>
+	<p>
+	<input id="b1" value="Поворот Х+" onclick="XPlus();" type="button"/>
+	<input id="b1" value="Поворот Y+" onclick="YPlus();" type="button"/>
+	<input id="b1" value="Поворот Z+" onclick="ZPlus();" type="button"/>
+	<p>
+	<input id="b1" value="Поворот Х-" onclick="XMinus();" type="button"/>
+	<input id="b1" value="Поворот Y-" onclick="YMinus();" type="button"/>
+	<input id="b1" value="Поворот Z-" onclick="ZMinus();" type="button"/>
+	<p>
+	<input id="b1" value="Показать связи" onclick="ShowLink();" type="button"/>
+	<input id="b1" value="Скрыть связи" onclick="UnShowLink();" type="button"/> -->
+</body>
+</html>

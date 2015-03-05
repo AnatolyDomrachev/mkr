@@ -1,0 +1,10 @@
+<?php
+$cipher=$this->cipher;
+$peNumber=$this->peNumber;
+	echo "	<head>
+		<meta http-equiv=\"Refresh\" content=\"1;url=http://$_SERVER[HTTP_HOST]/application/project/peStages?cipher=$cipher&peNumber=$peNumber\">
+		</head>";
+
+	echo '			<script language="JavaScript">
+					alert("Данные переданы на сервер");
+					</script>';

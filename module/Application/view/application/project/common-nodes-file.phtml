@@ -1,0 +1,86 @@
+﻿<?php
+/** @var $pes \Application\Entity\Pe[] */
+$pes = $this->pes;
+/** @var $commonPe \Application\Entity\Pe */
+$commonPe = $this->commonPe;
+
+$massiv_stroka=(serialize($pes));
+$massiv_stroka=str_replace("\"","--",$massiv_stroka);
+//$massiv_stroka=implode(",", $pes);
+//$massiv_stroka=addslashes(addslashes($massiv_stroka));
+$commonPeNumber=$commonPe->getNumber();
+/*
+echo '<pre>';
+print_r($pes);
+echo "\n\n commonPe \n";
+echo $commonPe->getNumber()	;
+echo $massiv_stroka;
+echo '</pre>';
+*/
+?>
+
+<!-- //////////////ANATOLY!!!!!!!!!!!!!!
+//Create button load file////////// -->
+
+<form enctype="multipart/form-data" method="post" action="commonNodes">
+<input name="common_pe" value="<?php echo $commonPe->getNumber(); ?>" type="hidden" />
+<input name="cipher" value="<?php echo $this->cipher; ?>" type="hidden" />
+<input name="stroka_pes" value="<?php echo $massiv_stroka ?>" type="hidden" />
+
+
+<Table border=1><tr><td>
+<b>Загрузка файлов с координатами общих узлов</b>
+<p>
+<img src="<?php echo $this->basePath('img/model.jpg') ?>">
+<Table border=0><tr><td>
+<input type="hidden" name="MAX_FILE_SIZE" value="100000" />
+ сечение 1 <td> <input type="file" name="rxyz" /> <tr><td>
+ сечение 2 <td> <input type="file" name="lxyz" />
+ <td><button type="submit">Прочитать файлы</button>
+</Table>
+</Table>
+<p><p>
+<!-- //////////////ANATOLY!!!!!!!!!!!!!!
+// END Create button load file////////// -->
+
+
+
+
+<!--
+<form method="post">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                        <tr>
+                            <th>№ сечения</th>
+                            <th>ПЕ</th>
+                            <th>-</th>
+                            <th>ПЕ</th>
+                            <th>№ общ. узла</th>
+                            <th>X, м</th>
+                            <th>Y, м</th>
+                            <th>Z, м</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        <input name="common_pe" value="<?php echo $commonPe->getNumber(); ?>" type="hidden" />
+                        <input name="cipher" value="<?php echo $this->cipher; ?>" type="hidden" />
+                        <?php foreach($pes as $pe): ?>
+                            <?php
+                            $peNumber = $pe['pe_number'];
+                            $nodeNumber = $pe['node_number'];
+                            ?>
+                                <tr>
+                                    <td><?php echo $pe['section_number']; ?></td>
+                                    <td><?php echo $commonPe->getNumber(); ?></td>
+                                    <td>-</td>
+                                    <td><?php echo $peNumber; ?></td>
+                                    <td><?php echo $nodeNumber; ?></td>
+                                    <td><input name="pe[<?= $peNumber; ?>][<?= $nodeNumber; ?>][x]" class="form-control small" type="text" /></td>
+                                    <td><input name="pe[<?= $peNumber; ?>][<?= $nodeNumber; ?>][y]" class="form-control small" type="text" /></td>
+                                    <td><input name="pe[<?= $peNumber; ?>][<?= $nodeNumber; ?>][z]" class="form-control small" type="text" /></td>
+                                </tr>
+                        <?php endforeach; ?>
+                        </tbody>
+                    </table>
+					

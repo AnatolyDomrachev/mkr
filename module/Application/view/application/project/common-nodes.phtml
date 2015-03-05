@@ -1,0 +1,129 @@
+<?php
+/** @var $pes \Application\Entity\Pe[] */
+$pes = $this->pes;
+/** @var $commonPe \Application\Entity\Pe */
+$commonPe = $this->commonPe;
+$points = $this->points;
+
+/* echo "<pre>";
+print_r($pes);
+print_r($commonPe);
+echo '<//pre>'; */
+//print_r($pes);
+//print_r($points);
+//echo '</pre>';
+//echo $commonPe->getNumber();
+/*
+$data=$this->data;
+$pes=$this->pes;
+
+
+echo '<pre>';
+print_r("$cipher \n");
+print_r("$common_pe \n");
+print_r($data);
+
+echo '</pre>';
+*/
+//$files=$_FILES;
+?>
+<b>
+<a href="/">Начальная страница</a>&nbsp &nbsp - &nbsp &nbsp <a href="/application/project/pe-stages?cipher=<?php echo "$cipher"; ?>">
+Работа с проектом</a>&nbsp &nbsp - &nbsp &nbsp <a href="/application/project/common-nodes?cipher=<?php echo "$cipher"; ?>">
+Загрузка координат общих узлов</a>
+
+</b><p><p>
+
+<style type="text/css">
+    table * {
+        text-align: center;
+    }
+	th {
+		background: LightYellow;
+	}
+</style>
+
+			
+			
+                <form enctype="multipart/form-data" method="post" action=SavePoints>
+                    <table cellpadding=2 width=90% border=2 style="font-size: 20px;">
+                        <thead>
+                        <tr>
+                            <th>№ сечения</th>
+                            <th>ПЕ-ПЕ</th>
+                            <th>№ общ. узла</th>
+                            <th>X, м</th>
+                            <th>Y, м</th>
+                            <th>Z, м</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        <input name="common_pe" value="<?php echo $commonPe->getNumber(); ?>" type="hidden" />
+                        <input name="cipher" value="<?php echo $this->cipher; ?>" type="hidden" />
+                        
+						<?php
+							$i=0;
+						?>
+						<?php foreach($pes as $pe): ?>
+                            <?php
+                            $peNumber = $pe['pe_number'];
+                            $nodeNumber = $pe['node_number'];
+							//if($peNumber==)
+                            ?>
+                                <tr>
+                                    <td><?php echo $pe['section_number']; ?></td>
+                                    <td><?php echo $commonPe->getNumber(); ?>-<?php echo $peNumber; ?></td>
+                                    <td><?php echo $nodeNumber; ?></td>
+                                    <td><input name="pe[<?= $peNumber; ?>][<?= $nodeNumber; ?>][x]" class="form-control small" type="text" value="<?=$points[$i][x]?>" /></td>
+                                    <td><input name="pe[<?= $peNumber; ?>][<?= $nodeNumber; ?>][y]" class="form-control small" type="text" value="<?=$points[$i][y]?>"/></td>
+                                    <td><input name="pe[<?= $peNumber; ?>][<?= $nodeNumber; ?>][z]" class="form-control small" type="text" value="<?=$points[$i][z]?>"/></td>
+                                </tr>
+                        <?php
+						$i++;
+						endforeach; ?>
+                        </tbody>
+                    </table>
+<button type="submit" class="btn btn-default">Согласовать данные</button>
+<p><p>
+</form>
+<!-- //////////////ANATOLY!!!!!!!!!!!!!!
+//Create button load file////////// -->
+
+<form enctype="multipart/form-data" method="post" >
+
+<Table border=1><tr><td>
+<b>Загрузка файлов с координатами общих узлов</b>
+<p>
+<img src="<?php echo $this->basePath('img/model.jpg') ?>">
+<Table border=0>
+<?php
+foreach($pes as $pe)
+	$arr[]= $pe['section_number'];
+	
+foreach(array_unique($arr) as $section)
+	echo "<tr><td>сечение $section <td> <input type=\"file\" name=\"xyz-$section\" />";
+?>		
+<td><button type="submit">Прочитать файлы</button>
+</form>
+</Table>
+</Table>
+<p><p>
+<!-- //////////////ANATOLY!!!!!!!!!!!!!!
+// END Create button load file////////// -->
+                    
+ <!--  <?php /*                 <a href="/application/project/work?cipher=<?php echo $this->cipher; ?>" class="btn btn-danger">х</a> 
+
+                    <div class="pull-right">
+                        <select name="bps" class="form-control">
+                            <?php foreach($this->bps as $id => $name): ?>
+                                <option value="<?php echo $id; ?>"><?php echo $name; ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div> */ ?>-->
+                
+            </div>
+        </div>
+    </div>
+</div>
+<?php  ?>

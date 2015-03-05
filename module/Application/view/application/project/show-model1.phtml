@@ -1,0 +1,301 @@
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Диплом</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <!-- Le styles -->
+        <link href="/css/bootstrap.min.css" media="screen" rel="stylesheet" type="text/css">
+<link href="/css/bootstrap-theme.min.css" media="screen" rel="stylesheet" type="text/css">
+<link href="/css/style.css" media="screen" rel="stylesheet" type="text/css">
+<link href="/img/favicon.ico" rel="shortcut icon" type="image/vnd.microsoft.icon">
+        <!-- Scripts -->
+        <!--[if lt IE 9]><script type="text/javascript" src="/js/html5shiv.js"></script><![endif]-->
+<!--[if lt IE 9]><script type="text/javascript" src="/js/respond.min.js"></script><![endif]-->
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<script type="text/javascript" src="/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/js/bootstrap.file-input.js"></script>
+    </head>
+    <body>
+
+
+<?php
+
+$lines=$this->lines;
+$points=$this->points;
+$hands=$this->hands;
+echo "<pre>";
+echo "points";
+print_r($points);
+echo "lines";
+print_r($lines);
+echo "hands";
+print_r($hands);
+die();
+?>
+
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>WebGL</title>
+<meta charset="utf-8" />
+</head>
+<body>
+<canvas id="canvas3D" width="800" height="600">Ваш браузер не поддерживает элемент canvas</canvas>
+
+<script  type="text/javascript" src="/js/gl-matrix-min.js"></script>
+
+<script id="shader-fs" type="x-shader/x-fragment">
+  void main(void) {
+    gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+  }
+</script>
+
+<script id="shader-vs" type="x-shader/x-vertex">
+  attribute vec3 aVertexPosition;
+   uniform mat4 uMVMatrix;
+  uniform mat4 uPMatrix;
+  void main(void) {
+     gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+  }
+</script>
+
+<script type="text/javascript">
+var gl;
+var shaderProgram;
+var vertexBuffer; // буфер вершин
+var indexBuffer; //буфер индексов
+
+var angle = 0.0; // угол поворота
+ 
+var mvMatrix = mat4.create(); 
+var pMatrix = mat4.create();
+
+var angle = 0.0; //угол вращения в радианах
+var angle2 = 0.0; //угол вращения в радианах
+var angle3 = 0.0; //угол вращения в радианах
+
+var zTranslation = -2.0; // смещение по оси Z
+var xTranslation = 0.0;
+var yTranslation = 0.0;
+
+// установка шейдеров
+function initShaders() {
+    var fragmentShader = getShader(gl.FRAGMENT_SHADER, 'shader-fs');
+    var vertexShader = getShader(gl.VERTEX_SHADER, 'shader-vs');
+ 
+    shaderProgram = gl.createProgram();
+ 
+    gl.attachShader(shaderProgram, vertexShader);
+    gl.attachShader(shaderProgram, fragmentShader);
+ 
+    gl.linkProgram(shaderProgram);
+      
+    if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
+        alert("Не удалось установить шейдеры");
+    }
+    gl.useProgram(shaderProgram);
+ 
+    shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "aVertexPosition");
+    gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
+	
+	shaderProgram.MVMatrix = gl.getUniformLocation(shaderProgram, "uMVMatrix");
+    shaderProgram.ProjMatrix = gl.getUniformLocation(shaderProgram, "uPMatrix");
+}
+
+function setMatrixUniforms(){
+    gl.uniformMatrix4fv(shaderProgram.ProjMatrix,false, pMatrix);
+    gl.uniformMatrix4fv(shaderProgram.MVMatrix, false, mvMatrix);  
+} 
+ 
+// Функция создания шейдера
+function getShader(type,id) {
+    var source = document.getElementById(id).innerHTML;
+ 
+    var shader = gl.createShader(type);
+     
+    gl.shaderSource(shader, source);
+ 
+    gl.compileShader(shader);
+   
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+        alert("Ошибка компиляции шейдера: " + gl.getShaderInfoLog(shader));
+        gl.deleteShader(shader);   
+        return null;
+    }
+    return shader;  
+}
+ // установка буферов вершин и индексов
+function initBuffers() {
+ 
+    vertices =[ 
+<?php foreach($points as $p): ?>
+<?php echo $p['x']; ?>,<?php echo $p['y']; ?>,<?php echo $p['z']; ?>,
+<?php endforeach; ?>
+];
+ 
+    indices = [
+	 <?php foreach($lines as $p): ?>
+<?php echo $p[1]; ?>,<?php echo $p[0]; ?>,
+<?php endforeach; ?>
+	];
+ // установка буфера вершин
+  vertexBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+  vertexBuffer.itemSize = 3;
+   
+  // создание буфера индексов
+  indexBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
+    // указываем число индексов это число равно числу индексов
+    indexBuffer.numberOfItems = indices.length;
+}
+  
+function draw() {    
+     
+    gl.clearColor(0.9, 1.0, 1.0, 1.0);
+     
+    gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
+ 
+    gl.clear(gl.COLOR_BUFFER_BIT);
+   
+    gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, 
+                         vertexBuffer.itemSize, gl.FLOAT, false, 0, 0);
+    // отрисовка треугольников
+    gl.drawElements(gl.LINES, indexBuffer.numberOfItems, gl.UNSIGNED_SHORT,0);
+}
+
+function setupWebGL()
+{
+    gl.clearColor(0.9, 1.0, 1.0, 1.0);  
+    gl.clear(gl.COLOR_BUFFER_BIT || gl.DEPTH_BUFFER_BIT); 
+     
+    gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
+    mat4.perspective(pMatrix, 1.04, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0);
+    mat4.identity(mvMatrix);
+    mat4.translate(mvMatrix,mvMatrix,[xTranslation, yTranslation, zTranslation]);
+    mat4.rotate(mvMatrix,mvMatrix, angle, [0, 1, 0]);
+	mat4.rotate(mvMatrix,mvMatrix, angle2, [1, 0, 0]); 
+	mat4.rotate(mvMatrix,mvMatrix, angle3, [0, 0, 1]);  
+}
+
+/* window.onload=function(){
+ 
+    var canvas = document.getElementById("canvas3D");
+    try {
+        gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+    }
+    catch(e) {}
+   
+      if (!gl) {
+        alert("Ваш браузер не поддерживает WebGL");
+      }
+    if(gl){
+        gl.viewportWidth = canvas.width;
+        gl.viewportHeight = canvas.height;
+         
+        initShaders();
+         
+        initBuffers();
+         
+        draw();  
+    }
+} */
+
+window.onload=function(){
+ 
+    var canvas = document.getElementById("canvas3D");
+    try {
+        gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+    }
+    catch(e) {}
+   
+      if (!gl) {
+        alert("Ваш браузер не поддерживает WebGL");
+      }
+    if(gl){
+		document.addEventListener('keydown', handleKeyDown, false);
+        gl.viewportWidth = canvas.width;
+        gl.viewportHeight = canvas.height;
+        initShaders();
+         
+        initBuffers();
+        // функция анимации
+        (function animloop(){
+            setupWebGL();
+            setMatrixUniforms();
+            draw(); 
+          requestAnimFrame(animloop, canvas);
+        })();
+          
+    }
+}
+
+function handleKeyDown(e){
+    switch(e.keyCode)
+    {
+        case 39:  
+            angle+=0.1;
+            break;
+        case 37: 
+            angle-=0.1;
+            break;
+		case 40:  
+            angle2+=0.1;
+            break;
+        case 38: 
+            angle2-=0.1;
+            break;
+				case 17:  
+            angle3+=0.1;
+            break;
+        case 18: 
+            angle3-=0.1;
+            break;
+        case 34: 
+            zTranslation+=0.1;
+            break;
+        case 33: 
+            zTranslation-=0.1;
+            break;
+        case 45: 
+            xTranslation+=0.1;
+            break;
+        case 46: 
+            xTranslation-=0.1;
+            break;
+        case 36: 
+            yTranslation+=0.1;
+            break;
+        case 35: 
+            yTranslation-=0.1;
+            break;
+		case 19: 
+            xTranslation=0.0;
+			yTranslation=0.0;
+			zTranslation=-2.0;
+			angle1=0.1;
+			angle2=0.1;
+			angle3=0.1;          
+			break;
+    }
+}
+
+window.requestAnimFrame = (function(){
+      return  window.requestAnimationFrame       || 
+              window.webkitRequestAnimationFrame || 
+              window.mozRequestAnimationFrame    || 
+              window.oRequestAnimationFrame      || 
+              window.msRequestAnimationFrame     ||
+             function(callback, element) {
+               return window.setTimeout(callback, 1000/60);
+             };
+})();
+</script>
+</body>
+</html>
+
+

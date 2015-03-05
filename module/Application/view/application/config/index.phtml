@@ -1,0 +1,197 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        Режим работы
+        <a href="#" onclick="updateRadioKey(this); return false;">
+            <span class="glyphicon glyphicon-save"></span>
+        </a>
+    </div>
+    <div class="panel-body">
+        <ul>
+            <?php foreach($this->modes as $mode): ?>
+                <?php $isCurrent = ($mode['alias'] == $this->currentMode); ?>
+                <div class="radio">
+                    <label>
+                        <input
+                            type="radio"
+                            name="mode"
+                            value="<?php echo $mode['alias']; ?>"
+                            <?php echo $isCurrent ? 'checked' : ''?>>
+                        <?php echo $mode['value']; ?>
+                    </label>
+                </div>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        Путь до exe файла клиента (используется только в режиме "Клиент")
+        <a href="#" onclick="updateKey(this); return false;"><span class="glyphicon glyphicon-save"></span></a>
+    </div>
+    <div class="panel-body">
+        <input type="text" class="form-control" key="clientFile" value="<?php echo $this->clientFile; ?>">
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        Папка хранения запросов
+        <a href="#" onclick="updateKey(this); return false;"><span class="glyphicon glyphicon-save"></span></a>
+    </div>
+    <div class="panel-body">
+        <input type="text" class="form-control" key="requestPath" value="<?php echo $this->config['request_path']; ?>">
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        Папка хранения ответов
+        <a href="#" onclick="updateKey(this); return false;"><span class="glyphicon glyphicon-save"></span></a>
+    </div>
+    <div class="panel-body">
+        <input type="text" class="form-control" key="responsePath" value="<?php echo $this->config['response_path']; ?>">
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        Шаблон имени файлов запроса и ответа
+        <a href="#" onclick="updateKey(this); return false;"><span class="glyphicon glyphicon-save"></span></a>
+    </div>
+    <div class="panel-body">
+        <input type="text" class="form-control" key="fileNamePattern" value="<?php echo $this->config['build_file_name']; ?>">
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">БПС</div>
+    <div class="panel-body">
+        <ul>
+            <?php foreach($this->config['bps'] as $bps): ?>
+                <li><?php echo $bps; ?></li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">Функции запроса</div>
+    <div class="panel-body">
+        <table class="table">
+            <thead>
+             <tr>
+                 <th>Алиас</th>
+                 <th>Номер</th>
+                 <th>Имя файла запроса</th>
+                 <th>Имя файла ответа</th>
+                 <th>Сохранить</th>
+             </tr>
+            </thead>
+            <tbody>
+                <?php foreach($this->requestConfig as $function): ?>
+                    <tr>
+                        <td class="alias"><?php echo $function['alias']; ?></td>
+                        <td class="number">
+                            <input type="text" class="form-control" value="<?php echo $function['number']; ?>">
+                        </td>
+                        <td class="request_file">
+                            <input type="text" class="form-control" value="<?php echo $function['request_file']; ?>">
+                        </td>
+                        <td class="response_file">
+                            <input type="text" class="form-control" value="<?php echo $function['response_file']; ?>">
+                        </td>
+                        <td>
+                            <a href="#" onclick="updateFunction(this); return false;">
+                                <span class="glyphicon glyphicon-save"></span>
+                            </a>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">Статусы ответов</div>
+    <div class="panel-body">
+        <table class="table">
+            <thead>
+             <tr>
+                 <th>Алиас</th>
+                 <th>Код</th>
+                 <th>Сохранить</th>
+             </tr>
+            </thead>
+            <tbody>
+            <?php foreach($this->responseStatuses as $responseStatus): ?>
+                <tr>
+                    <td><?php echo $responseStatus['alias']; ?></td>
+                    <td>
+                        <input
+                            type="text"
+                            class="form-control"
+                            alias="<?php echo $responseStatus['alias']; ?>"
+                            value="<?php echo $responseStatus['value']; ?>">
+                    </td>
+                    <td>
+                        <a href="#" onclick="updateResponseCode(this); return false;">
+                            <span class="glyphicon glyphicon-save"></span>
+                        </a>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function updateKey(el) {
+        var input = $(el).parent().next().children();
+        update(input.attr('key'), input.val());
+    }
+
+    function updateRadioKey(el) {
+        var input = $(el).parent().next().find("input:checked");
+        update(input.attr('name'), input.val());
+    }
+
+    function updateFunction(el) {
+        var tr = $(el).parent().parent(),
+            number = tr.children("td.number").children().val(),
+            alias = tr.children("td.alias").text(),
+            requestFile = tr.children("td.request_file").children().val(),
+            responseFile = tr.children("td.response_file").children().val();
+
+        $.ajax({
+            type: "POST",
+            url:  "/application/config/updateFunction",
+            data: {
+                number: number,
+                alias: alias,
+                requestFile: requestFile,
+                responseFile: responseFile
+            }
+        });
+    }
+
+    function updateResponseCode(el) {
+        var input = $(el).parent().prev().children();
+
+        $.ajax({
+            type: "POST",
+            url:  "/application/config/updateResponseCode",
+            data: {alias: input.attr('alias'), value: input.val()}
+        });
+    }
+
+    function update(key, value) {
+        $.ajax({
+            type: "POST",
+            url:  "/application/config/updateKey",
+            data: {key: key, value: value}
+        });
+    }
+</script>

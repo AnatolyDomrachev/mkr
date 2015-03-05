@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Project>
+    <ObjectName>56</ObjectName>
+    <ID_GIP>1</ID_GIP>
+    <Cipher>56</Cipher>
+    <CreationTime>01/05/2014 15:05</CreationTime>
+    <NumberProjElements>2</NumberProjElements>
+    <ListPE>
+        <ID PE="1">
+            <ID_Designer>2</ID_Designer>
+            <KX>4</KX>
+            <KY>5</KY>
+            <KZ>5</KZ>
+            <DX>3</DX>
+            <DY>3</DY>
+            <DZ>5</DZ>
+            <File>/var/www/diplomtest/data/files/a7f4b875988f4714e21f8f7b34040c7c.php</File>
+            <Description>345345</Description>
+        </ID>
+        <ID PE="2">
+            <ID_Designer>3</ID_Designer>
+            <KX>3</KX>
+            <KY>34</KY>
+            <KZ>5</KZ>
+            <DX>6</DX>
+            <DY>7</DY>
+            <DZ>8</DZ>
+            <File/>
+            <Description></Description>
+        </ID>
+    </ListPE>
+    <CombinationPE>
+        <ID PE="1">
+            <PE PE="1-2">
+                <S>1</S>
+                <P>2</P>
+                <O>34</O>
+            </PE>
+        </ID>
+    </CombinationPE>
+</Project>

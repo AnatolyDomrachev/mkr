@@ -1,0 +1,296 @@
+<?php
+/** @var $user \Application\Entity\User */
+$user = $this->user;
+?>
+
+<style type="text/css">
+    table * {
+        text-align: center;
+    }
+    table tbody td{
+        padding: 2px !important;
+    }
+    table tbody td input.small {
+        width: 35px;
+        padding: 0;
+        margin: 0 auto;
+    }
+</style>
+
+<div class="row">
+<div class="col-md-12">
+<div class="panel panel-default">
+<div class="panel-heading">
+    <h3 class="panel-title">Таблица</h3>
+</div>
+<div class="panel-body">
+<div class="col-md-12">
+    <form class="form-inline" role="form">
+        <div class="checkbox col-sm-2">
+            <label>
+                <input type="checkbox"> ГИП
+            </label>
+        </div>
+        <div class="col-sm-1">ФИО:</div>
+        <div class="form-group col-sm-2">
+            <input type="text" class="form-control" value="Main" disabled>
+        </div>
+        <div class="col-sm-1">Id:</div>
+        <div class="form-group col-sm-2">
+            <input type="text" class="form-control" value="117" disabled>
+        </div>
+    </form>
+</div>
+<br>
+<br>
+<div class="col-md-12">
+    <form class="form-inline" role="form">
+        <div class="checkbox col-sm-2">
+            <label>
+                <input type="checkbox" checked> Проектировщик
+            </label>
+        </div>
+        <div class="col-sm-1">ФИО:</div>
+        <div class="form-group col-sm-2">
+            <input type="text" class="form-control" value="Иванов И.И." disabled>
+        </div>
+        <div class="col-sm-1">Id:</div>
+        <div class="form-group col-sm-2">
+            <input type="text" class="form-control" value="111" disabled>
+        </div>
+    </form>
+</div>
+<br>
+<br>
+<div class="col-md-12">
+    <form class="form-inline" role="form">
+        <div class="col-sm-2"></div>
+        <div class="col-sm-1">Объект:</div>
+        <div class="form-group col-sm-2">
+            <input type="text" class="form-control" value="4PE" disabled>
+        </div>
+        <div class="col-sm-1">Шифр:</div>
+        <div class="form-group col-sm-2">
+            <select class="form-control" style="width: 100%" disabled>
+                <option>4PE</option>
+            </select>
+        </div>
+    </form>
+</div>
+<br>
+<br>
+<div class="col-md-12">
+    <form class="form-inline" role="form">
+        <div class="col-sm-2"></div>
+        <div class="col-sm-1">Кол-во ПЕ:</div>
+        <div class="form-group col-sm-2">
+            <input type="text" class="form-control" value="4" disabled>
+        </div>
+        <div class="col-sm-1">№ ПЕ:</div>
+        <div class="form-group col-sm-2">
+            <input type="text" class="form-control" value="1" disabled>
+        </div>
+    </form>
+</div>
+<br>
+<br>
+<table class="table table-bordered table-hover">
+    <thead>
+    <tr>
+        <th rowspan="2"></th>
+        <th colspan="3">2</th>
+        <th colspan="3">3</th>
+        <th colspan="3">4</th>
+        <th colspan="3">Координаты, м</th>
+        <th colspan="3">Размеры, м</th>
+        <th colspan="4"></th>
+    </tr>
+    <tr>
+        <th>с</th>
+        <th>п</th>
+        <th>о</th>
+
+        <th>с</th>
+        <th>п</th>
+        <th>о</th>
+
+        <th>с</th>
+        <th>п</th>
+        <th>о</th>
+
+        <th>x</th>
+        <th>y</th>
+        <th>z</th>
+
+        <th>x</th>
+        <th>y</th>
+        <th>z</th>
+
+        <th>Проектировщик</th>
+        <th>БПС</th>
+        <th>Файл модели ПЕ</th>
+        <th>Файл-уточнение</th>
+        <th>Примечание</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>1</td>
+
+        <td><input type="text" class="form-control small" value="2"></td>
+        <td><input type="text" class="form-control small"></td>
+        <td><input type="text" class="form-control small"></td>
+
+        <td><input type="text" class="form-control small"></td>
+        <td><input type="text" class="form-control small"></td>
+        <td><input type="text" class="form-control small"></td>
+
+        <td><input type="text" class="form-control small"></td>
+        <td><input type="text" class="form-control small"></td>
+        <td><input type="text" class="form-control small"></td>
+
+        <td><input type="text" class="form-control small" value="0"></td>
+        <td><input type="text" class="form-control small" value="0"></td>
+        <td><input type="text" class="form-control small" value="0"></td>
+
+        <td><input type="text" class="form-control small" value="1"></td>
+        <td><input type="text" class="form-control small" value="5"></td>
+        <td><input type="text" class="form-control small" value="5"></td>
+
+        <td>
+            <select class="form-control">
+                <option>Иванов И.И.</option>
+            </select>
+        </td>
+        <td>
+            <select class="form-control">
+                <option>Лира 9.0</option>
+            </select>
+        </td>
+        <td><button type="button" class="btn btn-danger">CI</button></td>
+        <td><button type="button" class="btn btn-danger">CI</button></td>
+        <td><input type="text" class="form-control"></td>
+    </tr>
+    <tr>
+        <td>2</td>
+
+        <td><input type="text" class="form-control small" disabled="disabled"></td>
+        <td><input type="text" class="form-control small" disabled="disabled"></td>
+        <td><input type="text" class="form-control small" disabled="disabled"></td>
+
+        <td><input type="text" class="form-control small" value="1"></td>
+        <td><input type="text" class="form-control small"></td>
+        <td><input type="text" class="form-control small"></td>
+
+        <td><input type="text" class="form-control small"></td>
+        <td><input type="text" class="form-control small"></td>
+        <td><input type="text" class="form-control small"></td>
+
+        <td><input type="text" class="form-control small" value="10"></td>
+        <td><input type="text" class="form-control small" value="0"></td>
+        <td><input type="text" class="form-control small" value="0"></td>
+
+        <td><input type="text" class="form-control small" value="3"></td>
+        <td><input type="text" class="form-control small" value="5"></td>
+        <td><input type="text" class="form-control small" value="5"></td>
+
+        <td>
+            <select class="form-control">
+                <option>Петров П.П.</option>
+            </select>
+        </td>
+        <td>
+            <select class="form-control">
+                <option>Лира 9.0</option>
+            </select>
+        </td>
+        <td><button type="button" class="btn btn-danger disabled">CI</button></td>
+        <td><button type="button" class="btn btn-danger disabled">CI</button></td>
+        <td><input type="text" class="form-control"></td>
+    </tr>
+    <tr>
+        <td>3</td>
+
+        <td><input type="text" class="form-control small" disabled="disabled"></td>
+        <td><input type="text" class="form-control small" disabled="disabled"></td>
+        <td><input type="text" class="form-control small" disabled="disabled"></td>
+
+        <td><input type="text" class="form-control small" disabled="disabled"></td>
+        <td><input type="text" class="form-control small" disabled="disabled"></td>
+        <td><input type="text" class="form-control small" disabled="disabled"></td>
+
+        <td><input type="text" class="form-control small" value="3"></td>
+        <td><input type="text" class="form-control small"></td>
+        <td><input type="text" class="form-control small"></td>
+
+        <td><input type="text" class="form-control small" value="20"></td>
+        <td><input type="text" class="form-control small" value="0"></td>
+        <td><input type="text" class="form-control small" value="0"></td>
+
+        <td><input type="text" class="form-control small" value="5"></td>
+        <td><input type="text" class="form-control small" value="5"></td>
+        <td><input type="text" class="form-control small" value="5"></td>
+
+        <td>
+            <select class="form-control">
+                <option>Сидоров И.И.</option>
+            </select>
+        </td>
+        <td>
+            <select class="form-control">
+                <option>Лира 9.0</option>
+            </select>
+        </td>
+        <td><button type="button" class="btn btn-danger disabled">CI</button></td>
+        <td><button type="button" class="btn btn-danger disabled">CI</button></td>
+        <td><input type="text" class="form-control"></td>
+    </tr>
+    <tr>
+        <td>4</td>
+
+        <td><input type="text" class="form-control small" disabled="disabled"></td>
+        <td><input type="text" class="form-control small" disabled="disabled"></td>
+        <td><input type="text" class="form-control small" disabled="disabled"></td>
+
+        <td><input type="text" class="form-control small" disabled="disabled"></td>
+        <td><input type="text" class="form-control small" disabled="disabled"></td>
+        <td><input type="text" class="form-control small" disabled="disabled"></td>
+
+        <td><input type="text" class="form-control small" disabled="disabled"></td>
+        <td><input type="text" class="form-control small" disabled="disabled"></td>
+        <td><input type="text" class="form-control small" disabled="disabled"></td>
+
+        <td><input type="text" class="form-control small" value="30"></td>
+        <td><input type="text" class="form-control small" value="0"></td>
+        <td><input type="text" class="form-control small" value="0"></td>
+
+        <td><input type="text" class="form-control small" value="1"></td>
+        <td><input type="text" class="form-control small" value="5"></td>
+        <td><input type="text" class="form-control small" value="5"></td>
+
+        <td>
+            <select class="form-control">
+                <option>Егоров Е.Е.</option>
+            </select>
+        </td>
+        <td>
+            <select class="form-control">
+                <option>Лира 9.0</option>
+            </select>
+        </td>
+        <td><button type="button" class="btn btn-danger disabled">CI</button></td>
+        <td><button type="button" class="btn btn-danger disabled">CI</button></td>
+        <td><input type="text" class="form-control"></td>
+    </tr>
+    </tbody>
+</table>
+
+<button type="button" class="btn btn-default">Показать схему</button>
+<button type="button" class="btn btn-default">Загрузка файлов общих узлов</button>
+<button type="button" class="btn btn-default">Детали СТ</button>
+<button type="button" class="btn btn-primary" disabled="disabled">Расчет</button>
+<button type="button" class="btn btn-default pull-right">Запрос данных</button>
+</div>
+</div>
+</div>
+</div>

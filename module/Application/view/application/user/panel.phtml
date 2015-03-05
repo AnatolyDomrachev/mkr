@@ -1,0 +1,98 @@
+<?php
+/** @var $user \Application\Entity\User */
+$user = $this->user;
+
+?>
+
+<style type="text/css">
+    .panel-body a.btn-default {
+        width: 330px;
+        margin-top: 5px;
+    }
+</style>
+
+<div class="row">
+    <div class="col-md-4"></div>
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <p>
+                    <?php if($user->isSingleMode()): ?>
+                        Однопользовательский режим
+                    <?php elseif($user->isMultiMode()): ?>
+                        Многопользовательский режим
+                    <?php endif; ?>
+                </p>
+                <p>
+                    <?php if($user->isGipRole()): ?>
+                        Руководитель:
+                    <?php elseif($user->isDesignerRole()): ?>
+                        Проектировщик:
+                    <?php endif; ?>
+                    <?php echo $user->getLogin(); ?>
+                </p>
+
+                <?php
+                $selectCiphers = '';
+                foreach($user->getCiphers() as $cipher) {
+                    $selectCiphers .= "<option value='$cipher'>$cipher</option>";
+                }
+                ?>
+
+                <?php if($user->isDesignerRole() && $user->isMultiMode()): ?>
+                    <div>
+                        <select name="ciphers" class="form-control">
+                            <option value="0">Шифр проекта</option>
+                            <?php echo $selectCiphers; ?>
+                        </select>
+                    </div>
+                    <a class="btn btn-default projectPeStages">Работа с проектом</a>
+                    <a class="btn btn-default projectView">Информация о проекте</a>
+                    <br><br>
+                    <a href="/application/config/client" type="button" class="btn btn-default">Настройки</a>
+                <?php endif; ?>
+                <?php if($user->isGipRole()): ?>
+                    <a href="/application/project/create" class="btn btn-default">Создать новый проект</a>
+                    <br><br>
+                    <div>
+                        <select name="ciphers" class="form-control">
+                            <option value="0">Шифр проекта</option>
+                            <?php echo $selectCiphers; ?>
+                        </select>
+                    </div>
+                    <?php if($user->isMultiMode()): ?>
+                        <a class="btn btn-default projectPeStages">Работа с проектом</a>
+                    <?php endif; ?>
+                    <a class="btn btn-default projectView">Информация о проекте</a>
+                    <a class="btn btn-default">Удалить проект(ы)</a>
+                    <br><br>
+                    <a href="/application/user/list" class="btn btn-default">Пользователи</a>
+                    <a href="/application/config/client" type="button" class="btn btn-default">Настройки</a>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4"></div>
+</div>
+
+<script type="text/javascript">
+    $(function() {
+        bindCiphers();
+
+        $("select[name=ciphers]").change(function() {
+            bindCiphers();
+        });
+    });
+
+    function bindCiphers() {
+        if($("select[name=ciphers]").val() != 0) {
+            bindCipher("projectView", "/application/project/view");
+            bindCipher("projectWork", "/application/project/work");
+			bindCipher("projectPeStages", "/application/project/peStages");
+        }
+    }
+
+    function bindCipher(elClass, href) {
+        $('a.' + elClass).attr("href", href + "?cipher=" + $("select[name=ciphers] option:selected").val());
+    }
+</script>

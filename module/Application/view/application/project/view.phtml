@@ -1,0 +1,102 @@
+﻿<?php
+$stages = $this->stages;
+$xml = $this->xml;
+$cipher = $this->cipher;
+
+//print_r($xml);
+
+foreach($stages as $stage)
+	$newStages[$stage[number]] = $stage[title];
+/* echo "<pre>";
+print_r($newStages); */
+//die();
+?>
+<b>
+<a href="/">Начальная страница</a>&nbsp &nbsp - &nbsp &nbsp <a href="/application/project/view?cipher=<?php echo "$cipher"; ?>">
+Информация о проекте</a>
+</b><p>
+<style type="text/css">
+    table tbody tr.current{
+        cursor: pointer;
+    }
+</style>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+            </div>
+            <table border=1>
+                <thead>
+                <tr bgcolor = PaleGoldenrod>
+                    <td><b>ПЕ</td>
+                    <td><b>ФИО Проектировщика</td>
+                    <td align="center"><b>Этап</td>
+                    <td><b>Дата и время</td>
+                </tr>
+                </thead>
+                <tbody>
+                <?php $peNumber=0; foreach($xml[ID] as $id): ?>
+                    <?php
+                    $peNumber++;
+                    ?>
+                    <tr>
+                        <td><?php echo $peNumber; ?></td>
+                        <td><?php echo $id->FIO_Designer; ?></td>
+                        <td><?php echo $newStages[$id->Stage+1]; ?> </td>
+                        <td><?php echo $id->Time ?></td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!--
+<div class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Этапы ПЕ №<span class="pe"></span></h4>
+            </div>
+            <table class="table">
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+/*     var cipher = '<?php echo $project->getCipher(); ?>';
+
+    $(function() {
+        $("table tbody tr.current").click(function() {
+            var peNumber = $(this).attr("number");
+
+            $.ajax({
+                url: "/application/project/pe_stages",
+                type: "POST",
+                data: {cipher: cipher, peNumber: peNumber},
+                dataType: "json",
+                success: function(response) {
+                    var stage, _class, number = 1;
+                    $('.modal .modal-title .pe').text(peNumber);
+                    $('.modal .table tbody').html('');
+                    for(var i in response.stages) {
+                        stage = response.stages[i];
+                        _class = (response.currentStage >= stage.number) ? "success" : "danger";
+                        $('.modal .table tbody').append('<tr class="'+_class+'"><td>'+number+'</td><td>'+stage.title+'</td></tr>');
+                        number++;
+                    }
+                    $('.modal').modal();
+                },
+                error: function() {
+                    alert("Ошибка при запросе");
+                }
+            });
+        });
+    }); */
+
+</script>

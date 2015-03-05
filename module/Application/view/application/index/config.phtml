@@ -1,0 +1,79 @@
+<div class="panel panel-default">
+    <div class="panel-heading">БПС</div>
+    <div class="panel-body">
+        <ul>
+            <?php foreach($this->config['bps'] as $bps): ?>
+                <li><?php echo $bps; ?></li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">Папка хранения запросов</div>
+    <div class="panel-body">
+        <?php echo $this->config['request_path']; ?>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">Папка хранения ответов</div>
+    <div class="panel-body">
+        <?php echo $this->config['response_path']; ?>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">Шаблон имени файлов запроса и ответа</div>
+    <div class="panel-body">
+        <?php echo $this->config['build_file_name']; ?>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">Функции запроса</div>
+    <div class="panel-body">
+        <table class="table">
+            <thead>
+             <tr>
+                 <th>Номер</th>
+                 <th>Алиас</th>
+                 <th>Имя файла запроса</th>
+                 <th>Имя файла ответа</th>
+             </tr>
+            </thead>
+            <tbody>
+                <?php foreach($this->config['request_config'] as $alias => $function): ?>
+                    <tr>
+                        <td><?php echo $function['function_number']; ?></td>
+                        <td><?php echo $alias; ?></td>
+                        <td><?php echo isset($function['request_file_name']) ? $function['request_file_name'] : '-'; ?></td>
+                        <td><?php echo isset($function['response_file_name']) ? $function['response_file_name'] : '-'; ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">Статусы ответов</div>
+    <div class="panel-body">
+        <table class="table">
+            <thead>
+             <tr>
+                 <th>Код</th>
+                 <th>Алиас</th>
+             </tr>
+            </thead>
+            <tbody>
+                <?php foreach($this->config['response_config'] as $code => $alias): ?>
+                    <tr>
+                        <td><?php echo $code; ?></td>
+                        <td><?php echo $alias; ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+</div>

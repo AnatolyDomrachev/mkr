@@ -1,0 +1,37 @@
+
+*** Init ***
+
+-------------------------------------------------------------------------------------------
+BLOCK                       TIME(ms) TIME(%) TIME(cl) ENTRIES   AVG(cl)   MIN(cl)   MAX(cl)
+-------------------------------------------------------------------------------------------
+BCAppCasual6::Init              0.00    0.00        0       1         0         0         0
+BCCommonWnd::Load              65.00    0.96       65       1        65        65        65
+BCCursorManager::Load          22.00    0.33       22       1        22        22        22
+BCEffectManager::Load          12.00    0.18       12       1        12        12        12
+BCEscapeMenu::Load              7.00    0.10        7       1         7         7         7
+BCFontTemplateManager::Load   433.00    6.41      433       1       433       433       433
+BCGame::Load                    6.00    0.09        6       1         6         6         6
+BCHogHints::Load                2.00    0.03        2       1         2         2         2
+BCHud::Load                   429.00    6.35      429       1       429       429       429
+BCInventory::Load               0.00    0.00        0       1         0         0         0
+BCJournal::Load               104.00    1.54      104       1       104       104       104
+BCLocalization::Load           16.00    0.24       16       1        16        16        16
+BCLocationManager::Load        21.00    0.31       21       1        21        21        21
+BCLuaHost::Init                 2.00    0.03        2       1         2         2         2
+BCMenu::Load                 1281.00   18.97     1281       1      1281      1281      1281
+BCOptionsWnd::Load              9.00    0.13        9       1         9         9         9
+BCParticleManager::Load         6.00    0.09        6       1         6         6         6
+BCPauseLayer::Load              1.00    0.01        1       1         1         1         1
+BCTutorial::Load                1.00    0.01        1       1         1         1         1
+BLApplication::GetImage      2874.00   42.57     2874     323         8         0       622
+BLFont::BLFont                433.00    6.41      433      30        14         8        58
+Base Subsystems              6752.00  100.00     6752       1      6752      6752      6752
+Font::ImageLoad               433.00    6.41      433      30        14         8        58
+Image::SetBits                  0.00    0.00        0     323         0         0         0
+gSave.Load                     21.00    0.31       21       1        21        21        21
+mCursorElem = LoadDrawElem     21.00    0.31       21       1        21        21        21
+mHudElem = LoadDrawElem       423.00    6.26      423       1       423       423       423
+mJournalElem = LoadDrawElem    93.00    1.38       93       1        93        93        93
+mMenuElem = LoadDrawElem       77.00    1.14       77       4        19         0        63
+mTutorElem = LoadDrawElem       1.00    0.01        1       1         1         1         1
+-------------------------------------------------------------------------------------------

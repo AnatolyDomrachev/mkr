@@ -1,0 +1,239 @@
+<?php
+//phpinfo();
+/** @var $user \Application\Entity\User */
+$user = $this->user;
+
+/** @var $project \Application\Entity\Project */
+$project = $this->project;
+
+/** @var $designers \Application\Entity\User[] */
+$designers = $this->designers;
+
+$peNumber=$this->peNumber;
+$MAC=$this->MAC;
+
+
+/* if(isset($this->FileName))
+{
+echo "Модель: " . $this->FileName . "<p>";
+$uploaddir = 'Z:\home\test\uploads\\';
+$filename = $_FILES[pe][name][1][fileModel];
+$uploadfile = $uploaddir . $filename;
+$tmp_name = $_FILES[pe][tmp_name][1][fileModel];
+move_uploaded_file($tmp_name, $uploadfile);
+echo "Загружен файл " . $filename . " в директорию " . $uploaddir; */
+
+/*
+
+$uploadfile = $uploaddir . basename($_FILES['fileModel']['name']);
+
+echo '<pre>';
+if (move_uploaded_file($_FILES['userfile']['tmp_name'], $uploadfile)) {
+    echo "Файл корректен и был успешно загружен.\n";
+} else {
+    echo "Возможная атака с помощью файловой загрузки!\n";
+}
+*/
+//echo '<pre>';
+//print_r($_FILES);
+//echo '</pre>';
+?>
+
+<style type="text/css">
+    table * {
+        text-align: center;
+    }
+    table tbody td{
+        padding: 2px !important;
+    }
+    table tbody td input.small {
+        width: 30px;
+        padding: 0;
+        margin: 0 auto;
+    }
+</style>
+
+<?php if($project): ?>
+<?php
+$userPeNumber = $project->getUserPe($user)->getNumber();
+$cipher = $project->getCipher();
+?>
+
+<a href="/">Начальная страница</a>&nbsp &nbsp - &nbsp &nbsp <a href="/application/project/pe-stages?cipher=<?php echo "$cipher"; ?>">
+Работа с проектом</a>&nbsp &nbsp - &nbsp &nbsp <a href="/application/project/work?cipher=<?php echo "$cipher"; ?>">
+Загрузка файла модели ПЕ</a>
+
+</b><p>
+
+<p><b>Номер ПЕ:<?php echo $peNumber; ?></b>
+<br>Проектировщик:<?php echo $user->getFio(); ?>
+<br>Объект:<?php echo $project->getName(); ?>
+<br>Шифр:<?php echo $project->getCipher(); ?>
+<br>Кол-во ПЕ:<?php echo $project->getNumberProjElements(); ?>
+
+<form enctype="multipart/form-data" method="post" action=saveModel>
+                    <table class="table table-bordered table-hover pe">
+                        <thead>
+                        <tr class="pe_numbers">
+                            <th class="id" rowspan="2"></th>
+                            <?php foreach($project->getListPe() as $pe): ?>
+                                <?php if($pe->getNumber() != 1): ?>
+                                    <th><?php echo $pe->getNumber(); ?></th>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                            <th colspan="3">Координаты, м</th>
+                            <th colspan="3">Размеры, м</th>
+                            <th rowspan = 2>Проектировщик</th>
+							<th rowspan = 2>Файл модели ПЕ</th>
+                            <th rowspan = 2>Файл-уточнение</th>
+							
+                        </tr>
+                        <tr class="spo_elements">
+                            <?php foreach($project->getListPe() as $pe): ?>
+                                <?php if($pe->getNumber() != 1): ?>
+                                    <th>с</th>
+                                    <!-- <th>п</th>
+                                    <th>о</th> -->
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+
+                            <th>x</th>
+                            <th>y</th>
+                            <th>z</th>
+
+                            <th>x</th>
+                            <th>y</th>
+                            <th>z</th>
+                            
+                            <!-- <th>Пояснение</th> -->
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php foreach($project->getListPe() as $pe): ?>
+                            <tr class="<?php echo ($pe->getNumber() == $peNumber) ? 'success' : ''; ?>">
+                                <td><?php echo $pe->getNumber(); ?></td>
+
+                                <?php foreach($project->getListPe() as $_pe): ?>
+                                    <?php if($_pe->getNumber() != 1): ?>
+                                        <td><?php echo $pe->getSCombination($_pe->getNumber()); ?></td>
+                                        <!--  <td><?php echo $pe->getPCombination($_pe->getNumber()); ?></td>
+                                        <td><?php echo $pe->getOCombination($_pe->getNumber()); ?></td> -->
+                                    <?php endif; ?>
+                                <?php endforeach; ?>
+
+                                <td><?php echo $pe->getKx(); ?></td>
+                                <td><?php echo $pe->getKy(); ?></td>
+                                <td><?php echo $pe->getKz(); ?></td>
+
+                                <td><?php echo $pe->getDx(); ?></td>
+                                <td><?php echo $pe->getDy(); ?></td>
+                                <td><?php echo $pe->getDz(); ?></td>
+
+                                <td><?php echo $designers[$pe->getDesignerId()]->getFio(); ?></td>
+                                <td>
+									
+									<?php
+									if($pe->getNumber()==$peNumber)
+									{
+										//echo "<input type=\"file\" title=\"CI\" data-filename-placement=\"inside\" class=\" exchangePeNumber\" name=\"pe[$pe->getNumber()][fileModel]\" /><td>";
+										echo "<input type=\"file\" title=\"CI\" data-filename-placement=\"inside\" class=\" exchangePeNumber\" name=\"fileModel\" /><td>";
+									}
+									?>
+                                    							
+								
+								<td><?php echo $pe->getDescription(); ?></td>
+                                
+                            </tr>
+                        <?php endforeach; ?>
+                        </tbody>
+                    </table>
+<input type="hidden" name="MAC" value="<?php echo $MAC ?>" />
+<input type="hidden" name="peNumber" value="<?php echo $peNumber ?>" />
+<input type="hidden" name="cipher" value="<?php echo $cipher ?>" />
+
+                    <button type="submit" class="btn btn-primary">Загрузить файл модели</button>
+
+<!--                    <a class="btn btn-default">Показать схему</a>-->
+<!-- ANATOLY                <a href="/application/project/commonNodes?cipher=<?php echo $project->getCipher() ?>&peNumber=<?php echo $userPeNumber; ?>"
+                       class="btn btn-default"> ANATOLY -->
+					
+<!--                    <a class="btn btn-default">Детали СТ</a>-->
+<!--                    <a class="btn btn-primary" disabled="disabled">Расчет</a>-->
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var peLastId = 0;
+
+    $(function() {
+        var pe_count = $("input[name=pe_count]").val();
+    });
+
+    function addPe()
+    {
+        peLastId++;
+        var pe = $("div.templates tr.pe_template").clone();
+        pe.children("td.id").append(peLastId);
+        pe.children("td.id").children("input").attr("name", "pe[" + peLastId + "][number]").val(peLastId);
+        pe.children("td.designer").children("select").attr("name", "pe[" + peLastId + "][designer]");
+
+        pe.find("input.exchangePeNumber").attr("name", function() {
+            return $(this).attr("name").replace("peNumber", peLastId);
+        });
+
+        $("table.pe tbody").append(pe);
+    }
+
+    function renderPe()
+    {
+        // Render th number pr
+        var th_count = $("table.pe tr.pe_numbers th.pe_number").length,
+            needle_th_count = peLastId - th_count;
+
+        for(var i = 1; i < needle_th_count; i++) {
+            $("table.pe tr.pe_numbers th.peBorder").before("<th class='pe_number' colspan='3'>" + (i + th_count + 1) + "</th>");
+        }
+
+        // Render th спо elements
+        var spo_count = ($("table.pe tr.spo_elements th.spo_element").length/ 3),
+            needle_spo_count = peLastId - spo_count;
+
+        for(var i = 1; i < needle_spo_count; i++) {
+            $("table.pe tr.spo_elements th.peBorder")
+                .before("<th class='spo_element'>с</th>")
+                .before("<th class='spo_element'>п</th>")
+                .before("<th class='spo_element'>о</th>")
+            ;
+        }
+
+        // Render inputs
+        $.each($("table.pe tbody tr"), function(index, pe) {
+            var input_count = ($(pe).find("td.spo_input").length / 3),
+                needle_input_count = peLastId - input_count,
+                pe_number = $(pe).find("td.id input").val();
+
+            var td_input = $("<td>").addClass("spo_input"),
+                input = $("<input>").attr("type", "text").addClass("form-control small");
+            for(var i = 1; i < needle_input_count; i++) {
+                var pe_link = i + input_count + 1,
+                    isDisabled = pe_link <= pe_number,
+                    _input = input.clone();
+
+                if(isDisabled) {
+                    _input.attr("disabled", "disabled");
+                }
+
+                $(pe).children("td.peBorder")
+                    .before(td_input.clone().html(_input.clone().attr("name", "pe["+pe_number+"][link]["+pe_link+"][s]")))
+                    .before(td_input.clone().html(_input.clone().attr("name", "pe["+pe_number+"][link]["+pe_link+"][p]")))
+                    .before(td_input.clone().html(_input.clone().attr("name", "pe["+pe_number+"][link]["+pe_link+"][o]")))
+                ;
+            }
+        });
+    }
+
+</script>
+<?php endif; ?>

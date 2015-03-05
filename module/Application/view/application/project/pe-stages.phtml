@@ -1,0 +1,244 @@
+<?php
+$peStageNumber=$this->peStageNumber;
+$peStages=$this->stages;
+$cipher=$this->cipher;
+$user = $this->user;
+$project = $this->project;
+$designers = $this->designers;
+$userPeNumber=$this->peNumber;
+
+/* echo "<pre>";
+print_r($project);
+print_r($user); */
+
+
+$uid=$user->getId();
+foreach($project->getListPe() as $pe){
+$peid=$pe->getDesignerId();
+if($uid==$peid){
+	$listPe[]=$pe->getNumber();
+	}
+}
+
+/* print_r($listPe);
+die(); */
+
+//echo $userPeNumber;die();
+/* echo "	<head>
+		<meta http-equiv=\"Refresh\" content=\"6;url=$url\">
+		</head>"; */
+?>
+
+<script>
+window.onload=function(){
+	test();
+	setInterval(test, 10000);
+}
+
+function test()
+{	
+	var peNumber = $("#peNumber").val();
+	var msg = 0;
+
+/* 	for (var i = 0; i < 12; i++) {
+		//$('div.square-green' + i).toggleClass('statusStyle' + i);
+		//$('div.square-red' + i).toggleClass('statusStyle' + i);
+		$('div.square-yellow' + i).toggleClass('statusStyle' + i);
+		} */
+	//$('div.deftable').html(deftable);
+//alert(window.location.pathname);
+//alert($("#peNumber").val());
+	$.ajax({
+		type: "POST",
+		url: window.location.pathname,
+		data: "pe_number="+peNumber+"&cipher=<?php echo $cipher; ?>&type=1",
+		success: function(msg){
+			
+			msg++;
+			//alert( "Прибыли данные: " + msg );
+			
+			//$('div.square-green').toggleClass('div.quare-white');
+			//$('div.square-white').toggleClass('div.statusStyle' + peOld);
+			//$('div.statusStyle' + msg).toggleClass('square-yellow' + msg);
+			$('div.statusStyle' + msg).html('<img src=/img/curent.png>');
+			
+			for (var i = 1; i < msg; i++) {
+				//$('div.statusStyle' + i).toggleClass('square-green' + i);
+				$('div.statusStyle' + i).html('<img src=/img/before.png>');
+			}
+			
+			for (var i = 11; i > msg; i--) {
+				//$('div.statusStyle' + i).toggleClass('square-red' + i);
+				$('div.statusStyle' + i).html('<img src=/img/after.png>');
+			}
+			
+			if(msg == 1){
+				$('div.statusName' + msg).html('<a href="/application/project/work?cipher=<?php echo $cipher; ?>&peNumber='
+				+ peNumber + '" class="btn btn-default">Копирование файла модели на вычислительный узел</a>');
+				
+				$('div.statusName' + 2).html('Указание БПС и координат общих узлов (Детали СТ)');
+			}
+			
+			if(msg == 2){
+				$('div.statusName' + 2).html('<a href="/application/project/commonNodes?cipher=<?php echo $cipher; ?>&peNumber='
+				+ peNumber + '" class="btn btn-default">Указание БПС и координат общих узлов (Детали СТ)</a>');
+				
+				$('div.statusName' + 1).html('Копирование файла модели на вычислительный узел');
+			}
+			
+			if(msg == 3){
+			$('div.statusName' + 2).html('Указание БПС и координат общих узлов (Детали СТ)');
+			$.ajax({
+					type: "POST",
+					url: window.location.pathname,
+					data: "pe_number="+peNumber+"&cipher=<?php echo $cipher; ?>&type=2",
+					success: function(msg2){
+					//alert( "Прибыли данные2: " + msg2 );
+					}
+					});
+				}	
+			
+			var peOld = peNumber;
+			
+		}
+	});
+}
+</script>
+
+<style type="text/css">
+    .panel-body a.btn-default {
+    width: 330px;
+    margin-top: 5px;
+	}
+	
+
+	.square-green{
+	background-color:PaleGreen;
+	}
+	.square-white{
+	background-color:white;
+	}
+	.square-yellow{
+	background-color:LightYellow;
+	}
+	.square-red{
+	background-color:red;
+	}
+
+</style>
+<b>
+<a href="/">Начальная страница</a>&nbsp &nbsp - &nbsp &nbsp <a href="/application/project/pe-stages?cipher=<?php echo "$cipher"; ?>">
+Работа с проектом</a>
+</b><p>
+<table   cellpadding=4 ><tr><td valign="top">
+<table>
+<tr><td><b>Номер ПЕ: <select id="peNumber"> 
+	<?php 
+	foreach($listPe as $pe){
+		if($pe != $userPeNumber)
+			echo "<option value= $pe> $pe </option>";
+		else
+			echo "<option value= $pe selected> $pe </option>";
+	} 
+	?>
+	</select>
+<button onclick="test();">Применить</button>
+
+<tr><td>Проектировщик:<?php echo $user->getFio(); ?>
+<tr><td>Объект:<?php echo $project->getName(); ?>
+<tr><td>Шифр:<?php echo $project->getCipher(); ?>
+<tr><td>Кол-во ПЕ:<?php echo $project->getNumberProjElements(); ?>
+<tr><td>
+<a href="/application/project/show-model?cipher=<?php echo "$cipher"; ?>" class="btn btn-default">Показать модель</a>
+</table>
+<td>
+
+
+<table border=1>
+		<tr bgcolor = PaleGoldenrod><td ><b>Стадия выполнения<td><b>Статус
+	
+<?php foreach($peStages as $peStage): ?>
+	<tr><td>
+	<div class="statusName<?php echo $peStage[number]; ?>">
+		<?php echo $peStage[title]; ?>  
+	</div>
+	</td><td>
+	<div class="statusStyle<?php echo $peStage[number]; ?>">
+		Загрузка...
+	</div>
+<?php endforeach; ?>		
+</table>
+
+
+<p>
+<p>
+
+<b>Связи между проектными единицами</b>		
+ <table class="table table-bordered table-hover pe">
+                        <thead><b>
+                        <tr class="pe_numbers">
+                            <td class="id" rowspan="2"><b>ПЕ</b></td>
+                            <?php foreach($project->getListPe() as $pe): ?>
+                                <?php if($pe->getNumber() != 1): ?>
+                                    <td><b><?php echo $pe->getNumber(); ?></td>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                            <td colspan="3" align="center" > <b>Координаты, м</td>
+                            <td colspan="3" align="center" ><b>Размеры, м</td>
+                            <td class="designer" colspan="4" rowspan="2" valign="middle" align="center"><b>Проектировщик</td>
+                        </tr>
+                        <tr class="spo_elements">
+                            <?php foreach($project->getListPe() as $pe): ?>
+                                <?php if($pe->getNumber() != 1): ?>
+                                    <td><b>с</td>
+                                    <!-- <td>п</td>
+                                    <td>о</td> -->
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+
+                            <td align="center"><b>x</td>
+                            <td align="center"><b>y</td>
+                            <td align="center"><b>z</td>
+
+                            <td align="center"><b>x</td>
+                            <td align="center"><b>y</td>
+                            <td align="center"><b>z</td>
+							
+                            
+                            
+                            
+                        </tr>
+                        </b></thead>
+                        <tbody>
+                        <?php foreach($project->getListPe() as $pe): ?>
+                            <tr class="<?php echo ($pe->getNumber() == $userPeNumber) ? 'success' : ''; ?>">
+                                <td><?php echo $pe->getNumber(); ?></td>
+
+                                <?php foreach($project->getListPe() as $_pe): ?>
+                                    <?php if($_pe->getNumber() != 1): ?>
+                                        <td><?php echo $pe->getSCombination($_pe->getNumber()); ?></td>
+                                     <!--   <td><?php echo $pe->getPCombination($_pe->getNumber()); ?></td>
+                                        <td><?php echo $pe->getOCombination($_pe->getNumber()); ?></td> -->
+                                    <?php endif; ?>
+                                <?php endforeach; ?>
+
+                                <td><?php echo $pe->getKx(); ?></td>
+                                <td><?php echo $pe->getKy(); ?></td>
+                                <td><?php echo $pe->getKz(); ?></td>
+
+                                <td><?php echo $pe->getDx(); ?></td>
+                                <td><?php echo $pe->getDy(); ?></td>
+                                <td><?php echo $pe->getDz(); ?></td>
+
+                                <td><?php echo $designers[$pe->getDesignerId()]->getFio(); ?></td>
+                                
+                                
+                            </tr>
+                        <?php endforeach; ?>
+                        </tbody>
+                    </table>
+    </body>
+</html>
+
+
+
